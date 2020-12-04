@@ -1,4 +1,4 @@
-package me.web_server;
+package me.web_server.dao;
 
 import java.util.Iterator;
 import java.util.List;
@@ -66,7 +66,7 @@ final class SqlHelper {
         }
 
         try {
-            return type.cast(temp5);
+            return type.cast(temp5.next());
         } catch (ClassCastException exception) {
             return null;
         }

@@ -1,7 +1,9 @@
-package me.web_server;
+package me.web_server.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import me.web_server.dao.IUserDao;
 
 @Service
 public class UserService implements IUserService {

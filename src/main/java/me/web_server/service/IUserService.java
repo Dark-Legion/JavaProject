@@ -1,4 +1,4 @@
-package me.web_server;
+package me.web_server.service;
 
 public interface IUserService {
     boolean authenticateAdmin(String username, byte[] passwordHash);

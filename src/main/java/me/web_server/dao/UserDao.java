@@ -1,4 +1,4 @@
-package me.web_server;
+package me.web_server.dao;
 
 import java.sql.Types;
 
