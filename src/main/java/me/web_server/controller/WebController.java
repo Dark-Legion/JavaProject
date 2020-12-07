@@ -144,7 +144,7 @@ public class WebController {
 				byte[] passwordHash;
 
 				{
-					final MessageDigest digest = MessageDigest.getInstance("SHA3-256");
+					final MessageDigest digest = MessageDigest.getInstance("SHA3-512");
 					passwordHash = digest.digest(password.getBytes(StandardCharsets.UTF_8));
 				}
 
