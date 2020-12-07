@@ -26,7 +26,7 @@ public class WebController {
 	private final static String USERNAME_ATTRIBUTE = "user";
 	private final static String PASSWORD_HASH_ATTRIBUTE = "pass";
 
-	private interface ModelAndVewCallable {
+	private interface ModelAndViewCallable {
 		abstract ModelAndView get(String username, byte[] passwordHash);
 	}
 
@@ -44,7 +44,7 @@ public class WebController {
 		return true;
 	}
 
-	public ModelAndView authenticateAndCallHandler(HttpSession session, HttpServletRequest request, ModelAndVewCallable adminPage, ModelAndVewCallable sellerPage, boolean loginRedirect) {
+	public ModelAndView authenticateAndCallHandler(HttpSession session, HttpServletRequest request, ModelAndViewCallable adminPage, ModelAndViewCallable sellerPage, boolean loginRedirect) {
 		if (!AntiSessionHijack.validateSession(session, request)) {
 			return ModelAndViews.INVALID_LOGIN;
 		}
