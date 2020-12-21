@@ -1,8 +1,5 @@
 package me.web_server.controller;
 
-import java.nio.charset.StandardCharsets;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
@@ -12,12 +9,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
+import me.web_server.Hasher;
+import me.web_server.SqlQueryException;
 import me.web_server.service.IUserService;
 
 @Controller
+@RequestMapping("/")
 public class WebController {
 	@Autowired
 	private IUserService userService;
@@ -44,7 +45,13 @@ public class WebController {
 		return true;
 	}
 
-	public ModelAndView authenticateAndCallHandler(HttpSession session, HttpServletRequest request, ModelAndViewCallable adminPage, ModelAndViewCallable sellerPage, boolean loginRedirect) {
+	public ModelAndView authenticateAndCallHandler(
+		HttpSession session,
+		HttpServletRequest request,
+		ModelAndViewCallable adminPage,
+		ModelAndViewCallable sellerPage,
+		boolean loginRedirect
+	) throws SqlQueryException {
 		if (!AntiSessionHijack.validateSession(session, request)) {
 			return ModelAndViews.INVALID_LOGIN;
 		}
@@ -55,13 +62,17 @@ public class WebController {
 
 		if (nonNullParameters(admin, username, passwordHash)) {
 			if (admin) {
-				if (userService.authenticateAdmin(username, passwordHash)) {
+				boolean result = userService.authenticateAdmin(username, passwordHash);
+
+				if (result) {
 					return adminPage.get(username, passwordHash);
 				} else {
 					return ModelAndViews.INVALID_LOGIN;
 				}
 			} else {
-				if (userService.authenticateSeller(username, passwordHash)) {
+				boolean result = userService.authenticateSeller(username, passwordHash);
+				
+				if (result) {
 					return sellerPage.get(username, passwordHash);
 				} else {
 					return ModelAndViews.INVALID_LOGIN;
@@ -72,7 +83,7 @@ public class WebController {
 		return (loginRedirect ? ModelAndViews.LOGIN_REDIRECT : ModelAndViews.INVALID_LOGIN);
 	}
 
-	@GetMapping("/")
+	@GetMapping
 	public ModelAndView rootGet() {
 		return ModelAndViews.ROOT;
 	}
@@ -123,7 +134,7 @@ public class WebController {
 		@RequestParam("loginType") Optional<String> loginTypeOptional,
 		@RequestParam("user") Optional<String> usernameOptional,
 		@RequestParam("pass") Optional<String> passwordOptional
-	) {
+	) throws SqlQueryException {
 		Boolean admin = getAdmin(session);
 
 		if (loginTypeOptional.isPresent()) {
@@ -140,31 +151,22 @@ public class WebController {
 			String username = usernameOptional.get();
 			String password = passwordOptional.get();
 
-			try {
-				byte[] passwordHash;
+			final byte[] passwordHash = Hasher.hash(password);
 
-				{
-					final MessageDigest digest = MessageDigest.getInstance("SHA3-512");
-					passwordHash = digest.digest(password.getBytes(StandardCharsets.UTF_8));
-				}
+			boolean authenticationSuccessful = false;
 
-				boolean authenticationSuccessful = false;
+			if (admin) {
+				authenticationSuccessful = userService.authenticateAdmin(username, passwordHash);
+			} else {
+				authenticationSuccessful = userService.authenticateSeller(username, passwordHash);
+			}
 
-				if (admin) {
-					authenticationSuccessful = userService.authenticateAdmin(username, passwordHash);
-				} else {
-					authenticationSuccessful = userService.authenticateSeller(username, passwordHash);
-				}
+			if (authenticationSuccessful) {
+				saveCredentials(session, admin, username, passwordHash);
 
-				if (authenticationSuccessful) {
-					saveCredentials(session, admin, username, passwordHash);
-
-					return ModelAndViews.MAIN_REDIRECT;
-				} else {
-					return ModelAndViews.INVALID_LOGIN;
-				}
-			} catch (NoSuchAlgorithmException exception) {
-				return ModelAndViews.INTERNAL_ERROR;
+				return ModelAndViews.MAIN_REDIRECT;
+			} else {
+				return ModelAndViews.INVALID_LOGIN;
 			}
 		} else {
 			return ModelAndViews.LOGIN_SELECT;
@@ -172,7 +174,7 @@ public class WebController {
 	}
 
 	@GetMapping("/main")
-	public ModelAndView mainGet(HttpSession session, HttpServletRequest request) {
+	public ModelAndView mainGet(HttpSession session, HttpServletRequest request) throws SqlQueryException {
 		return authenticateAndCallHandler(
 			session,
 			request,
