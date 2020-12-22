@@ -15,13 +15,13 @@ import org.springframework.web.servlet.ModelAndView;
 
 import me.web_server.Hasher;
 import me.web_server.SqlQueryException;
-import me.web_server.service.IUserService;
+import me.web_server.service.UserService;
 
 @Controller
 @RequestMapping("/")
 public class WebController {
 	@Autowired
-	private IUserService userService;
+	private UserService userService;
 
 	private final static String ADMIN_ATTRIBUTE = "admin";
 	private final static String USERNAME_ATTRIBUTE = "user";

@@ -7,7 +7,7 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Bean;
 
-import me.web_server.dao.IUserDao;
+import me.web_server.dao.UserDao;
 
 @SpringBootTest(classes = { WebServerApplication.class })
 class WebServerApplicationTests {
@@ -17,7 +17,7 @@ class WebServerApplicationTests {
 	}
 
 	@Bean
-	CommandLineRunner demo(IUserDao dao) {
+	CommandLineRunner demo(UserDao dao) {
 		return (args) -> {
 			dao.authenticateAdmin("user", new byte[] { 0 });
 		};

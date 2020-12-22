@@ -10,13 +10,13 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import me.web_server.Hasher;
-import me.web_server.service.IUserService;
+import me.web_server.service.UserService;
 
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {
 	@Autowired
-	private IUserService userService;
+	private UserService userService;
 
 	@GetMapping("/admin")
 	public Callable<HashMap<String, Boolean>> authAdmin(@RequestParam("user") String username, @RequestParam("pass") String password) {

@@ -10,13 +10,13 @@ import org.springframework.web.bind.annotation.RestController;
 
 import me.web_server.Hasher;
 import me.web_server.SqlQueryException;
-import me.web_server.service.IUserService;
+import me.web_server.service.UserService;
 
 @RequestMapping("/api/manage/products")
 @RestController
 public class ProductsController {
     @Autowired
-    private IUserService userService;
+    private UserService userService;
 
     @PutMapping
     public HashMap<String, Object> addProduct(

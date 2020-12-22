@@ -22,7 +22,11 @@ import org.springframework.stereotype.Repository;
 import me.web_server.SqlQueryException;
 
 @Repository
-public class UserDao extends JdbcDaoSupport implements IUserDao {
+public class UserDao extends JdbcDaoSupport {
+    public interface SqlQueryCallable<T> {
+        T call() throws SQLException;
+    }
+
     private final static Logger LOGGER = Logger.getLogger(UserDao.class.getName());
 
     private final static String NAME_PREFIX = "\"application\".";
@@ -33,6 +37,7 @@ public class UserDao extends JdbcDaoSupport implements IUserDao {
     private final static String AUTHENTICATE_ADMIN_FUNCTION = NAME_PREFIX + "\"authenticate_admin\"(?, ?)";
     private final static String AUTHENTICATE_SELLER_FUNCTION = NAME_PREFIX + "\"authenticate_seller\"(?, ?)";
     private final static String GET_CLIENT_LIST_FUNCTION = NAME_PREFIX + "\"get_client_list\"(?, ?, ?)";
+    private final static String GET_CLIENT_LIST_PAGE_COUNT_FUNCTION = NAME_PREFIX + "\"get_client_list_page_count\"(?, ?)";
 
     private Connection connection;
 
@@ -42,6 +47,7 @@ public class UserDao extends JdbcDaoSupport implements IUserDao {
     private final ThreadLocal<CallableStatement> authenticateAdmin;
     private final ThreadLocal<CallableStatement> authenticateSeller;
     private final ThreadLocal<PreparedStatement> getClientList;
+    private final ThreadLocal<CallableStatement> getClientListPageCount;
 
     public UserDao() {
         addClient = new ThreadLocal<>();
@@ -50,6 +56,7 @@ public class UserDao extends JdbcDaoSupport implements IUserDao {
         authenticateAdmin = new ThreadLocal<>();
         authenticateSeller = new ThreadLocal<>();
         getClientList = new ThreadLocal<>();
+        getClientListPageCount = new ThreadLocal<>();
     }
 
     @Autowired
@@ -70,7 +77,6 @@ public class UserDao extends JdbcDaoSupport implements IUserDao {
         return exception.getMessage().replaceAll("(?:ERROR\\: |\\s+Where\\: .* at RAISE$)", "");
     }
 
-    @Override
     public <T> T handleSqlQuery(SqlQueryCallable<T> callable) throws SqlQueryException {
         try {
             return callable.call();
@@ -109,7 +115,6 @@ public class UserDao extends JdbcDaoSupport implements IUserDao {
         return statement;
     }
 
-    @Override
     public Void addClient(String username, byte[] passwordHash, String client, boolean isCompany) throws SQLException {
         PreparedStatement statement = getAddClient();
 
@@ -134,7 +139,6 @@ public class UserDao extends JdbcDaoSupport implements IUserDao {
         return statement;
     }
 
-    @Override
     public Void addProduct(String username, byte[] passwordHash, String product, double price) throws SQLException {
         PreparedStatement statement = getAddProduct();
 
@@ -159,7 +163,6 @@ public class UserDao extends JdbcDaoSupport implements IUserDao {
         return statement;
     }
 
-    @Override
     public Void addUser(String username, byte[] passwordHash, String newUsername, byte[] newPasswordHash,
             boolean isAdmin) throws SQLException {
         PreparedStatement statement = getAddUser();
@@ -195,7 +198,6 @@ public class UserDao extends JdbcDaoSupport implements IUserDao {
         return statement;
     }
 
-    @Override
     public boolean authenticateAdmin(String username, byte[] passwordHash) throws SQLException {
         return authenticateUser(getAuthAdmin(), username, passwordHash);
     }
@@ -211,7 +213,6 @@ public class UserDao extends JdbcDaoSupport implements IUserDao {
         return statement;
     }
 
-    @Override
     public boolean authenticateSeller(String username, byte[] passwordHash) throws SQLException {
         return authenticateUser(getAuthSeller(), username, passwordHash);
     }
@@ -227,7 +228,6 @@ public class UserDao extends JdbcDaoSupport implements IUserDao {
         return statement;
     }
 
-    @Override
     public Map<String, List<Object>> getClientList(String username, byte[] passwordHash, int page) throws SQLException {
         PreparedStatement statement = getGetClientList();
 
@@ -252,5 +252,27 @@ public class UserDao extends JdbcDaoSupport implements IUserDao {
         }
         
         return map;
+    }
+
+    private CallableStatement getGetClientListPageCount() throws SQLException {
+        CallableStatement statement = getClientListPageCount.get();
+
+        if (statement == null) {
+            statement = connection.prepareCall("{ ? = call " + GET_CLIENT_LIST_PAGE_COUNT_FUNCTION + " }");
+            statement.registerOutParameter(1, Types.INTEGER);
+            getClientListPageCount.set(statement);
+        }
+
+        return statement;
+    }
+
+    public int getClientListPageCount(String username, byte[] passwordHash) throws SQLException {
+        CallableStatement statement = getGetClientListPageCount();
+
+        setAuthParameters(statement, username, passwordHash, 2);
+
+        statement.execute();
+
+        return statement.getInt(1);
     }
 }
