@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Manage Products</title>
+	<style>
+		fieldset * {
+			display: inline-block;
+		}
+		table * {
+			border: 1px solid black;
+		}
+	</style>
+</head>
+<body>
+	<p>Products</p>
+	<fieldset>
+		<form action="/main">
+			<button type="submit">Return to main</button>
+		</form>
+		<form th:unless="${prev == null}">
+			<input type="hidden" name="page" th:value="${prev}" />
+			<button type="submit">Previous page</button>
+		</form>
+		<form th:unless="${next == null}">
+			<input type="hidden" name="page" th:value="${next}" />
+			<button type="submit">Next page</button>
+		</form>
+	</fieldset>
+	<table>
+		<thead>
+			<tr>
+				<th>Name</th>
+				<th>Price</th>
+				<th>Added by</th>
+				<th>Added on</th>
+			</tr>
+		</thead>
+		<tbody>
+			<th:block th:each="product : ${products}">
+				<tr>
+					<td th:text="${product.name}"/>
+					<td th:text="${product.price}"/>
+					<td th:text="${product.addedBy}"/>
+					<td th:text="${product.addedOn}"/>
+				</tr>
+			</th:block>
+		</tbody>
+	</table>
+</body>
+</html>

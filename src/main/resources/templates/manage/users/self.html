@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Manage Your Profile</title>
+	<style>
+		fieldset * {
+			display: inline-block;
+		}
+	</style>
+</head>
+<body>
+	<p>Manage Your Profile</p>
+	<fieldset>
+		<form action="/main">
+			<button type="submit">Return to main</button>
+		</form>
+	</fieldset>
+	<form method="post">
+		<label for="new_pass">Enter your new password:</label>
+		<input type="password" name="new_pass" />
+		<button type="submit">Change password</button>
+	</form>
+</body>
+</html>

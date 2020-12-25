@@ -10,35 +10,28 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import me.web_server.Hasher;
-import me.web_server.service.UserService;
+import me.web_server.service.AuthService;
+import me.web_server.service.GenericService;
 
-@RestController
 @RequestMapping("/api/auth")
-public class AuthController {
+@RestController
+public class AuthController extends GenericRestController {
 	@Autowired
-	private UserService userService;
+	private AuthService authService;
 
 	@GetMapping("/admin")
-	public Callable<HashMap<String, Boolean>> authAdmin(@RequestParam("user") String username, @RequestParam("pass") String password) {
-		return new Callable<HashMap<String, Boolean>>(){
-			@Override
-			public HashMap<String, Boolean> call() throws Exception {
-				HashMap<String, Boolean> result = new HashMap<>(1);
-				result.put("success", userService.authenticateAdmin(username, Hasher.hash(password)));
-				return result;
-			}
-		};
+	public Callable<HashMap<String, Object>> authAdmin(
+		@RequestParam("user") String username,
+		@RequestParam("pass") String password
+	) {
+		return GenericService.handleAsyncRestRequest(() -> authService.authenticateAdmin(username, Hasher.hash(password)));
 	}
 
 	@GetMapping("/seller")
-	public Callable<HashMap<String, Boolean>> authSeller(@RequestParam("user") String username, @RequestParam("pass") String password) {
-		return new Callable<HashMap<String, Boolean>>(){
-			@Override
-			public HashMap<String, Boolean> call() throws Exception {
-				HashMap<String, Boolean> result = new HashMap<>(1);
-				result.put("success", userService.authenticateSeller(username, Hasher.hash(password)));
-				return result;
-			}
-		};
+	public Callable<HashMap<String, Object>> authSeller(
+		@RequestParam("user") String username,
+		@RequestParam("pass") String password
+	) {
+		return GenericService.handleAsyncRestRequest(() -> authService.authenticateSeller(username, Hasher.hash(password)));
 	}
 }

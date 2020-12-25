@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Select page</title>
+</head>
+<body>
+	<p>Please select page:</p>
+	<fieldset>
+		<th:block th:each="z : ${#numbers.sequence(1, page_count)}">
+			<form method="get">
+				<input type="hidden" name="page" th:value="${z}" />
+				<button type="submit" th:text="${z}" />
+			</form>
+		</th:block>
+	</fieldset>
+</body>
+</html>

@@ -1,278 +1,162 @@
 package me.web_server.dao;
 
 import java.sql.CallableStatement;
-import java.sql.Connection;
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.logging.Logger;
 
-import javax.annotation.PostConstruct;
-import javax.sql.DataSource;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.support.JdbcDaoSupport;
 import org.springframework.stereotype.Repository;
 
-import me.web_server.SqlQueryException;
-
 @Repository
-public class UserDao extends JdbcDaoSupport {
-    public interface SqlQueryCallable<T> {
-        T call() throws SQLException;
-    }
-
-    private final static Logger LOGGER = Logger.getLogger(UserDao.class.getName());
-
-    private final static String NAME_PREFIX = "\"application\".";
-
-    private final static String ADD_CLIENT_FUNCTION = NAME_PREFIX + "\"add_client\"(?, ?, ?, ?)";
-    private final static String ADD_PRODUCT_FUNCTION = NAME_PREFIX + "\"add_product\"(?, ?, ?, ?)";
-    private final static String ADD_USER_FUNCTION = NAME_PREFIX + "\"add_user\"(?, ?, ?, ?, ?)";
-    private final static String AUTHENTICATE_ADMIN_FUNCTION = NAME_PREFIX + "\"authenticate_admin\"(?, ?)";
-    private final static String AUTHENTICATE_SELLER_FUNCTION = NAME_PREFIX + "\"authenticate_seller\"(?, ?)";
-    private final static String GET_CLIENT_LIST_FUNCTION = NAME_PREFIX + "\"get_client_list\"(?, ?, ?)";
-    private final static String GET_CLIENT_LIST_PAGE_COUNT_FUNCTION = NAME_PREFIX + "\"get_client_list_page_count\"(?, ?)";
-
-    private Connection connection;
-
-    private final ThreadLocal<PreparedStatement> addClient;
-    private final ThreadLocal<PreparedStatement> addProduct;
-    private final ThreadLocal<PreparedStatement> addUser;
-    private final ThreadLocal<CallableStatement> authenticateAdmin;
-    private final ThreadLocal<CallableStatement> authenticateSeller;
-    private final ThreadLocal<PreparedStatement> getClientList;
-    private final ThreadLocal<CallableStatement> getClientListPageCount;
-
-    public UserDao() {
-        addClient = new ThreadLocal<>();
-        addProduct = new ThreadLocal<>();
-        addUser = new ThreadLocal<>();
-        authenticateAdmin = new ThreadLocal<>();
-        authenticateSeller = new ThreadLocal<>();
-        getClientList = new ThreadLocal<>();
-        getClientListPageCount = new ThreadLocal<>();
-    }
-
-    @Autowired
-    DataSource dataSource;
-
-    @PostConstruct
-    private void initialize() throws SQLException {
-        setDataSource(dataSource);
-
-        connection = dataSource.getConnection();
-    }
-
-    private static boolean isInternalError(SQLException exception) {
-        return !exception.getMessage().matches("^ERROR\\: .+\\s+Where\\: .+ at RAISE$");
-    }
+public class UserDao extends PostgreSqlDao {
+	private final static String ADD_USER = NAME_PREFIX + "\"add_user\"(?, ?, ?, ?, ?)";
+	private final static String CHANGE_USER_NAME = NAME_PREFIX + "\"change_user\"(?, ?, ?, ?, ?)";
+	private final static String CHANGE_USER_PASSWORD = NAME_PREFIX + "\"change_user_password\"(?, ?, ?)";
+	private final static String DELETE_USER = NAME_PREFIX + "\"delete_user\"(?, ?, ?, ?)";
+	private final static String GET_USER_LIST = NAME_PREFIX + "\"get_user_list\"(?, ?, ?)";
+	private final static String GET_USER_LIST_PAGE_COUNT = NAME_PREFIX + "\"get_user_list_page_count\"(?, ?)";
 
-    private static String getSqlExceptionMessage(SQLException exception) {
-        return exception.getMessage().replaceAll("(?:ERROR\\: |\\s+Where\\: .* at RAISE$)", "");
-    }
+	private final ThreadLocal<PreparedStatement> addUser = new ThreadLocal<>();
+	private final ThreadLocal<PreparedStatement> changeUserName = new ThreadLocal<>();
+	private final ThreadLocal<PreparedStatement> changeUserPassword = new ThreadLocal<>();
+	private final ThreadLocal<PreparedStatement> deleteUser = new ThreadLocal<>();
+	private final ThreadLocal<PreparedStatement> getUserList = new ThreadLocal<>();
+	private final ThreadLocal<CallableStatement> getUserListPageCount = new ThreadLocal<>();
 
-    public <T> T handleSqlQuery(SqlQueryCallable<T> callable) throws SqlQueryException {
-        try {
-            return callable.call();
-        } catch (SQLException exception) {
-            if (isInternalError(exception)) {
-                LOGGER.severe("Error occured while authenticating seller! [" + exception.getMessage() + "]");
-                
-                throw new SqlQueryException("Internal error occured!");
-            } else {
-                throw new SqlQueryException(getSqlExceptionMessage(exception));
-            }
-        }
-    }
+	private PreparedStatement getAddUser() throws SQLException {
+		PreparedStatement statement = addUser.get();
 
-    private static void setAuthUser(PreparedStatement statement, String username, int offset) throws SQLException {
-        statement.setString(offset, username);
-    }
+		if (statement == null) {
+			statement = getDbConnection().prepareCall("call " + ADD_USER + ";");
+			addUser.set(statement);
+		}
 
-    private static void setAuthPassword(PreparedStatement statement, byte[] passwordHash, int offset) throws SQLException {
-        statement.setBytes(offset, passwordHash);
-    }
+		return statement;
+	}
 
-    private static void setAuthParameters(PreparedStatement statement, String username, byte[] passwordHash, int offset) throws SQLException {
-        setAuthUser(statement, username, offset);
-        setAuthPassword(statement, passwordHash, offset + 1);
-    }
+	public Void addUser(String username, byte[] passwordHash, String newName, byte[] newPasswordHash,
+			boolean isAdmin) throws SQLException {
+		PreparedStatement statement = getAddUser();
 
-    private PreparedStatement getAddClient() throws SQLException {
-        PreparedStatement statement = addClient.get();
+		setAuthParameters(statement, username, passwordHash, 1);
+		setAuthParameters(statement, newName, newPasswordHash, 3);
+		statement.setBoolean(5, isAdmin);
 
-        if (statement == null) {
-            statement = connection.prepareStatement("call " + ADD_CLIENT_FUNCTION + ";");
-            addUser.set(statement);
-        }
+		statement.execute();
 
-        return statement;
-    }
+		return null;
+	}
 
-    public Void addClient(String username, byte[] passwordHash, String client, boolean isCompany) throws SQLException {
-        PreparedStatement statement = getAddClient();
+	private PreparedStatement getChangeUserName() throws SQLException {
+		PreparedStatement statement = changeUserName.get();
 
-        setAuthParameters(statement, username, passwordHash, 1);
+		if (statement == null) {
+			statement = getDbConnection().prepareStatement("call " + CHANGE_USER_NAME + ";");
+			changeUserName.set(statement);
+		}
 
-        statement.setString(3, client);
-        statement.setBoolean(4, isCompany);
+		return statement;
+	}
 
-        statement.execute();
+	public Void changeUser(String username, byte[] passwordHash, String user, String newName, byte[] newPasswordHash) throws SQLException {
+		PreparedStatement statement = getChangeUserName();
 
-        return null;
-    }
+		setAuthParameters(statement, username, passwordHash, 1);
+		statement.setString(3, user);
+		statement.setString(4, newName);
+		statement.setBytes(5, newPasswordHash);
 
-    private PreparedStatement getAddProduct() throws SQLException {
-        PreparedStatement statement = addProduct.get();
+		statement.execute();
 
-        if (statement == null) {
-            statement = connection.prepareStatement("call " + ADD_PRODUCT_FUNCTION + ";");
-            addUser.set(statement);
-        }
+		return null;
+	}
 
-        return statement;
-    }
+	private PreparedStatement getChangeUserPassword() throws SQLException {
+		PreparedStatement statement = changeUserPassword.get();
 
-    public Void addProduct(String username, byte[] passwordHash, String product, double price) throws SQLException {
-        PreparedStatement statement = getAddProduct();
+		if (statement == null) {
+			statement = getDbConnection().prepareStatement("call " + CHANGE_USER_PASSWORD + ";");
+			changeUserPassword.set(statement);
+		}
 
-        setAuthParameters(statement, username, passwordHash, 1);
+		return statement;
+	}
 
-        statement.setString(3, product);
-        statement.setDouble(4, price);
+	public Void changeUserPassword(String username, byte[] passwordHash, byte[] newPasswordHash) throws SQLException {
+		PreparedStatement statement = getChangeUserPassword();
 
-        statement.execute();
+		setAuthParameters(statement, username, passwordHash, 1);
+		statement.setBytes(3, newPasswordHash);
 
-        return null;
-    }
+		statement.execute();
 
-    private PreparedStatement getAddUser() throws SQLException {
-        PreparedStatement statement = addUser.get();
+		return null;
+	}
 
-        if (statement == null) {
-            statement = connection.prepareStatement("call " + ADD_USER_FUNCTION + ";");
-            addUser.set(statement);
-        }
+	private PreparedStatement getDeleteUser() throws SQLException {
+		PreparedStatement statement = deleteUser.get();
 
-        return statement;
-    }
+		if (statement == null) {
+			statement = getDbConnection().prepareStatement("call " + DELETE_USER + ";");
+			deleteUser.set(statement);
+		}
 
-    public Void addUser(String username, byte[] passwordHash, String newUsername, byte[] newPasswordHash,
-            boolean isAdmin) throws SQLException {
-        PreparedStatement statement = getAddUser();
+		return statement;
+	}
 
-        setAuthParameters(statement, username, passwordHash, 1);
+	public Void deleteUser(String username, byte[] passwordHash, String user, String reason) throws SQLException {
+		PreparedStatement statement = getDeleteUser();
 
-        setAuthParameters(statement, newUsername, newPasswordHash, 3);
+		setAuthParameters(statement, username, passwordHash, 1);
+		statement.setString(3, user);
+		statement.setString(4, reason);
 
-        statement.setBoolean(5, isAdmin);
+		statement.execute();
 
-        statement.execute();
+		return null;
+	}
 
-        return null;
-    }
+	private PreparedStatement getGetUserList() throws SQLException {
+		PreparedStatement statement = getUserList.get();
 
-    private boolean authenticateUser(CallableStatement statement, String username, byte[] passwordHash) throws SQLException {
-        setAuthParameters(statement, username, passwordHash, 2);
+		if (statement == null) {
+			statement = getDbConnection().prepareStatement("select * from " + GET_USER_LIST + ";");
+			getUserList.set(statement);
+		}
 
-        statement.execute();
+		return statement;
+	}
 
-        return statement.getBoolean(1);
-    }
+	public ArrayList<HashMap<String, Object>> getUserList(String username, byte[] passwordHash, int page) throws SQLException {
+		PreparedStatement statement = getGetUserList();
 
-    private CallableStatement getAuthAdmin() throws SQLException {
-        CallableStatement statement = authenticateAdmin.get();
+		setAuthParameters(statement, username, passwordHash, 1);
+		statement.setInt(3, page);
 
-        if (statement == null) {
-            statement = connection.prepareCall("{ ? = call " + AUTHENTICATE_ADMIN_FUNCTION + " }");
-            statement.registerOutParameter(1, Types.BOOLEAN);
-            authenticateAdmin.set(statement);
-        }
+		return mapResultSet(statement.executeQuery());
+	}
 
-        return statement;
-    }
+	private CallableStatement getGetUserListPageCount() throws SQLException {
+		CallableStatement statement = getUserListPageCount.get();
 
-    public boolean authenticateAdmin(String username, byte[] passwordHash) throws SQLException {
-        return authenticateUser(getAuthAdmin(), username, passwordHash);
-    }
+		if (statement == null) {
+			statement = getDbConnection().prepareCall("{ ? = call " + GET_USER_LIST_PAGE_COUNT + " }");
+			statement.registerOutParameter(1, Types.INTEGER);
+			getUserListPageCount.set(statement);
+		}
 
-    private CallableStatement getAuthSeller() throws SQLException {
-        CallableStatement statement = authenticateSeller.get();
+		return statement;
+	}
 
-        if (statement == null) {
-            statement = connection.prepareCall("{ ? = call " + AUTHENTICATE_SELLER_FUNCTION + " }");
-            authenticateSeller.set(statement);
-        }
+	public int getUserListPageCount(String username, byte[] passwordHash) throws SQLException {
+		CallableStatement statement = getGetUserListPageCount();
 
-        return statement;
-    }
+		setAuthParameters(statement, username, passwordHash, 2);
 
-    public boolean authenticateSeller(String username, byte[] passwordHash) throws SQLException {
-        return authenticateUser(getAuthSeller(), username, passwordHash);
-    }
+		statement.execute();
 
-    private PreparedStatement getGetClientList() throws SQLException {
-        PreparedStatement statement = getClientList.get();
-
-        if (statement == null) {
-            statement = connection.prepareStatement("select * from " + GET_CLIENT_LIST_FUNCTION + ";");
-            getClientList.set(statement);
-        }
-
-        return statement;
-    }
-
-    public Map<String, List<Object>> getClientList(String username, byte[] passwordHash, int page) throws SQLException {
-        PreparedStatement statement = getGetClientList();
-
-        setAuthParameters(statement, username, passwordHash, 1);
-
-        statement.setInt(3, page);
-
-        ResultSet set = statement.executeQuery();
-        
-        HashMap<String, List<Object>> map = new HashMap<>();
-
-        int columns = set.getMetaData().getColumnCount();
-
-        for (int z = 0; z < columns; ++z) {
-            map.put(set.getMetaData().getColumnName(z + 1), new ArrayList<>());
-        }
-
-        while (set.next()) {
-            for (String key : map.keySet()) {
-                map.get(key).add(set.getObject(key));
-            }
-        }
-        
-        return map;
-    }
-
-    private CallableStatement getGetClientListPageCount() throws SQLException {
-        CallableStatement statement = getClientListPageCount.get();
-
-        if (statement == null) {
-            statement = connection.prepareCall("{ ? = call " + GET_CLIENT_LIST_PAGE_COUNT_FUNCTION + " }");
-            statement.registerOutParameter(1, Types.INTEGER);
-            getClientListPageCount.set(statement);
-        }
-
-        return statement;
-    }
-
-    public int getClientListPageCount(String username, byte[] passwordHash) throws SQLException {
-        CallableStatement statement = getGetClientListPageCount();
-
-        setAuthParameters(statement, username, passwordHash, 2);
-
-        statement.execute();
-
-        return statement.getInt(1);
-    }
+		return statement.getInt(1);
+	}
 }

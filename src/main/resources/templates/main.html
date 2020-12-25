@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Admin Main</title>
+	<style>
+		fieldset * {
+			display: inline-block;
+		}
+	</style>
+</head>
+<body>
+	<p>Welcome, <i th:text="${user}" />.</p>
+	<fieldset>
+		<form action="login">
+			<button type="submit">Logout</button>
+		</form>
+		<form action="manage/users/self">
+			<button type="submit">Change password</button>
+		</form>
+		<th:block th:if="${admin}">
+			<form action="manage/users">
+				<button type="submit">Manage users</button>
+			</form>
+			<form action="manage/products">
+				<button type="submit">Manage products</button>
+			</form>
+		</th:block>
+		<th:block th:unless="${admin}">
+			<form action="sell">
+				<button type="submit">Register sell</button>
+			</form>
+			<form action="manage/clients">
+				<button type="submit">Manage clients</button>
+			</form>
+		</th:block>
+	</fieldset>
+</body>
+</html>

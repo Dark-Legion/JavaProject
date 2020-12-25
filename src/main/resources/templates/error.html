@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Error</title>
+</head>
+<body>
+	<p>Something went wrong!</p>
+	<fieldset>
+		<form action="/main">
+			<button type="submit">Return to main</button>
+		</form>
+		<br />
+		<p>Error:</p>
+		<fieldset>
+			<p th:text="${error}"></p>
+		</fieldset>
+	</fieldset>
+</body>
+</html>
