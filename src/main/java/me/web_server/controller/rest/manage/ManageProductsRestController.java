@@ -14,85 +14,70 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import me.web_server.Hasher;
-import me.web_server.controller.rest.GenericRestController;
-import me.web_server.service.ClientService;
 import me.web_server.service.GenericService;
+import me.web_server.service.ProductService;
 
-@RequestMapping("/api/manage/clients")
+@RequestMapping("/api/manage/products")
 @RestController
-public class ClientsController extends GenericRestController {
+public class ManageProductsRestController {
 	@Autowired
-	private ClientService clientService;
-
-	@GetMapping
-	public Callable<HashMap<String, Object>> getClientListPageCount(
-		@RequestParam("user") String username,
-		@RequestParam("pass") String password
-	) {
-		return GenericService.handleAsyncRestRequest(
-			() -> clientService.getClientListPageCount(username, Hasher.hash(password))
-		);
-	}
+	private ProductService productService;
 
 	@GetMapping("/{page}")
-	public Callable<HashMap<String, Object>> getClientList(
+	public Callable<HashMap<String, Object>> getProductList(
 		@PathVariable("page") Integer page,
 		@RequestParam("user") String username,
 		@RequestParam("pass") String password
 	) {
 		return GenericService.handleAsyncRestRequest(
-			() -> clientService.getClientList(username, Hasher.hash(password), page)
+			() -> productService.getProductList(username, Hasher.hash(password), page)
+		);
+	}
+
+	@GetMapping
+	public Callable<HashMap<String, Object>> getProductListPageCount(
+		@RequestParam("user") String username,
+		@RequestParam("pass") String password
+	) {
+		return GenericService.handleAsyncRestRequest(
+			() -> productService.getProductListPageCount(username, Hasher.hash(password))
 		);
 	}
 
 	@PutMapping
-	public Callable<HashMap<String, Object>> addClient(
+	public Callable<HashMap<String, Object>> addProduct(
 		@RequestParam("user") String username,
 		@RequestParam("pass") String password,
-		@RequestParam("new_client") String client,
-		@RequestParam("is_company") Boolean isCompany
+		@RequestParam("name") String product,
+		@RequestParam("price") Double price
 	) {
 		return GenericService.handleAsyncRestRequest(
-			() -> clientService.addClient(
-				username,
-				Hasher.hash(password),
-				client,
-				isCompany
-			)
+			() -> productService.addProduct(username, Hasher.hash(password), product, price)
 		);
 	}
 
 	@PostMapping
-	public Callable<HashMap<String, Object>> changeClientName(
+	public Callable<HashMap<String, Object>> changeProduct(
 		@RequestParam("user") String username,
 		@RequestParam("pass") String password,
-		@RequestParam("change_client") String client,
-		@RequestParam("new_name") String newName
+		@RequestParam("change_product") String product,
+		@RequestParam(name = "name", required = false) String newName,
+		@RequestParam(name = "price", required = false) Double newPrice
 	) {
 		return GenericService.handleAsyncRestRequest(
-			() -> clientService.changeClient(
-				username,
-				Hasher.hash(password),
-				client,
-				newName
-			)
+			() -> productService.changeProduct(username, Hasher.hash(password), product, newName, newPrice)
 		);
 	}
 
 	@DeleteMapping
-	public Callable<HashMap<String, Object>> deleteClient(
+	public Callable<HashMap<String, Object>> deleteProduct(
 		@RequestParam("user") String username,
 		@RequestParam("pass") String password,
-		@RequestParam("delete_client") String client,
+		@RequestParam("name") String product,
 		@RequestParam("reason") String reason
 	) {
 		return GenericService.handleAsyncRestRequest(
-			() -> clientService.deleteClient(
-				username,
-				Hasher.hash(password),
-				client,
-				reason
-			)
+			() -> productService.deleteProduct(username, Hasher.hash(password), product, reason)
 		);
 	}
 }

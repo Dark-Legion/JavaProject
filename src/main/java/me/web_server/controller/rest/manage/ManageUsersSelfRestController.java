@@ -15,7 +15,7 @@ import me.web_server.service.UserService;
 
 @RequestMapping("/api/manage/users/self")
 @RestController
-public class UsersSelfController {
+public class ManageUsersSelfRestController {
 	@Autowired
 	private UserService userService;
 

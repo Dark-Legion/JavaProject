@@ -93,23 +93,20 @@ public abstract class GenericDao extends JdbcDaoSupport {
 				if (columnType == Types.ARRAY || columnType == Types.OTHER) {
 					try {
 						Object[] objects = Object[].class.cast(set.getArray(z + 1).getArray());
-						ArrayList<Object> objectsList = new ArrayList<>(objects.length);
 
-						object_loop: for (Object object : objects) {
-							String value = object.toString();
+						object_loop: for (int z_object = 0; z_object < objects.length; ++z_object) {
+							String value = objects[z_object].toString();
 							
 							for (Pattern pattern : typeMapping.keySet()) {
 								if (pattern.matcher(value).matches()) {
-									objectsList.add(typeMapping.get(pattern).call(value));
+									objects[z_object] = typeMapping.get(pattern).call(value);
 
 									continue object_loop;
 								}
 							}
-
-							objectsList.add(object);
 						}
 
-						map.put(metadata.getColumnName(z + 1), objectsList);
+						map.put(metadata.getColumnName(z + 1), objects);
 
 						continue;
 					} catch (ClassCastException | SQLException exception) {}

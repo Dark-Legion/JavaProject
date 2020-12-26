@@ -1,6 +1,12 @@
 package me.web_server;
 
+import java.lang.reflect.Array;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 public final class Utils {
+	private final static SimpleDateFormat FORMATTER = new SimpleDateFormat("YYYY-MM-dd");
+
     private Utils() {
         super();
 	}
@@ -40,6 +46,21 @@ public final class Utils {
 	public static <T> T safeCast(Class<T> typeClass, Object object) {
 		if (nonNullParameters(typeClass, object)) {
 			return typeClass.isInstance(object) ? typeClass.cast(object) : null;
+		} else {
+			return null;
+		}
+	}
+
+	public static <T> T[] safeTransformArray(Class<T> typeClass, Object[] array) {
+		if (nonNullParameters(typeClass, array)) {
+			@SuppressWarnings("unchecked")
+			T[] transformedArray = (T[]) Array.newInstance(typeClass, array.length);
+
+			for (int z = 0; z < array.length; ++z) {
+				transformedArray[z] = safeCast(typeClass, array[z]);
+			}
+
+			return transformedArray;
 		} else {
 			return null;
 		}
@@ -132,5 +153,9 @@ public final class Utils {
 		IfNullIfThrowingCallable<E> nullCallable
 	) throws E {
 		return (object == null ? nullCallable.call() : notNullCallable.call(object));
+	}
+
+	public static String formatDateIso(Date date) {
+		return FORMATTER.format(date);
 	}
 }

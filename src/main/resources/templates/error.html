@@ -6,15 +6,18 @@
 	<title>Error</title>
 </head>
 <body>
-	<p>Something went wrong!</p>
 	<fieldset>
 		<form action="/main">
 			<button type="submit">Return to main</button>
 		</form>
-		<br />
-		<p>Error:</p>
+	</fieldset>
+	<fieldset>
+		<p>Something went wrong!</p>
 		<fieldset>
-			<p th:text="${error}"></p>
+			<p>Error:</p>
+			<fieldset>
+				<p th:text="${error}"></p>
+			</fieldset>
 		</fieldset>
 	</fieldset>
 </body>

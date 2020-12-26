@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Sales Report</title>
+	<style>
+		fieldset * {
+			display: inline-block;
+		}
+		table * {
+			border: 1px solid black;
+		}
+	</style>
+</head>
+<body>
+	<fieldset>
+		<form action="/main">
+			<button type="submit">Return to main</button>
+		</form>
+		<form method="get">
+			<th:block th:unless="${seller == null}">
+				<input type="hidden" name="seller" th:value="${seller}" />
+			</th:block>
+			<button type="submit">Choose another period</button>
+		</form>
+		<th:block th:unless="${prev == null}">
+			<form method="get">
+				<th:block th:unless="${seller == null}">
+					<input type="hidden" name="seller" th:value="${seller}" />
+				</th:block>
+				<input type="hidden" name="start" th:value="${start}" />
+				<input type="hidden" name="end" th:value="${end}" />
+				<input type="hidden" name="page" th:value="${prev}" />
+				<button type="submit">Previous page</button>
+			</form>
+		</th:block>
+		<th:block th:unless="${next == null}">
+			<form method="get">
+				<th:block th:unless="${seller == null}">
+					<input type="hidden" name="seller" th:value="${seller}" />
+				</th:block>
+				<input type="hidden" name="start" th:value="${start}" />
+				<input type="hidden" name="end" th:value="${end}" />
+				<input type="hidden" name="page" th:value="${next}" />
+				<button type="submit">Next page</button>
+			</form>
+		</th:block>
+	</fieldset>
+	<p>Sales Report</p>
+	<table>
+		<thead>
+			<tr>
+				<th th:unless="${hideSeller}" rowspan="2">Seller</th>
+				<th rowspan="2">Client</th>
+				<th rowspan="2">Sold on</th>
+				<th colspan="3">Products</th>
+			</tr>
+			<tr>
+				<th>Product</th>
+				<th>Quantity</th>
+				<th>Price per unit</th>
+			</tr>
+		</thead>
+		<tbody>
+			<th:block th:each="sale : ${sales}">
+				<th:block th:each="product, stats : ${sale.products}">
+					<tr>
+						<td th:if="${stats.index == 0}" th:unless="${hideSeller}" th:rowspan="${#lists.size(sale.products)}" th:text="${sale.seller}" />
+						<td th:if="${stats.index == 0}" th:rowspan="${#lists.size(sale.products)}" th:text="${sale.client}" />
+						<td th:if="${stats.index == 0}" th:rowspan="${#lists.size(sale.products)}" th:text="${sale.soldOn}" />
+						<td th:text="${product.product}" />
+						<td th:text="${product.quantity}" />
+						<td th:text="${product.pricePerUnit}" />
+					</tr>
+				</th:block>
+			</th:block>
+		</tbody>
+	</table>
+</body>
+</html>

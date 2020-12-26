@@ -15,7 +15,7 @@ import me.web_server.service.GenericService;
 
 @RequestMapping("/api/auth")
 @RestController
-public class AuthController extends GenericRestController {
+public class AuthRestController extends GenericRestController {
 	@Autowired
 	private AuthService authService;
 

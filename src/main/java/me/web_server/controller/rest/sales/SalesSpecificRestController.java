@@ -15,13 +15,13 @@ import org.springframework.web.bind.annotation.RestController;
 import me.web_server.controller.rest.GenericRestController;
 import me.web_server.Hasher;
 import me.web_server.service.GenericService;
-import me.web_server.service.SaleService;
+import me.web_server.service.SalesService;
 
 @RestController
 @RequestMapping("/api/sales/self")
-public class SalesSpecificController extends GenericRestController {
+public class SalesSpecificRestController extends GenericRestController {
 	@Autowired
-	private SaleService saleService;
+	private SalesService salesService;
 
 	@GetMapping("/{page}")
 	public Callable<HashMap<String, Object>> getSaleReport(
@@ -33,7 +33,7 @@ public class SalesSpecificController extends GenericRestController {
 	) {
 		return GenericService.handleAsyncRestRequest(
 			() -> {
-				return saleService.getSalesReportForSeller(username, Hasher.hash(password), username, start, end, page);
+				return salesService.getSalesReportForSeller(username, Hasher.hash(password), username, start, end, page);
 			}
 		);
 	}
@@ -47,7 +47,7 @@ public class SalesSpecificController extends GenericRestController {
 	) {
 		return GenericService.handleAsyncRestRequest(
 			() -> {
-				return saleService.getSalesReportForSellerPageCount(username, Hasher.hash(password), username, start, end);
+				return salesService.getSalesReportForSellerPageCount(username, Hasher.hash(password), username, start, end);
 			}
 		);
 	}

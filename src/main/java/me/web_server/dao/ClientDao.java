@@ -12,7 +12,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public class ClientDao extends PostgreSqlDao {
 	private final static String ADD_CLIENT = NAME_PREFIX + "\"add_client\"(?, ?, ?, ?)";
-	private final static String CHANGE_CLIENT_NAME = NAME_PREFIX + "\"change_client_name\"(?, ?, ?, ?)";
+	private final static String CHANGE_CLIENT = NAME_PREFIX + "\"change_client\"(?, ?, ?, ?)";
 	private final static String DELETE_CLIENT = NAME_PREFIX + "\"delete_client\"(?, ?, ?, ?)";
 	private final static String GET_CLIENT_LIST = NAME_PREFIX + "\"get_client_list\"(?, ?, ?)";
 	private final static String GET_CLIENT_LIST_PAGE_COUNT = NAME_PREFIX + "\"get_client_list_page_count\"(?, ?)";
@@ -50,14 +50,14 @@ public class ClientDao extends PostgreSqlDao {
 		PreparedStatement statement = changeClient.get();
 
 		if (statement == null) {
-			statement = getDbConnection().prepareStatement("call " + CHANGE_CLIENT_NAME + ";");
+			statement = getDbConnection().prepareStatement("call " + CHANGE_CLIENT + ";");
 			changeClient.set(statement);
 		}
 
 		return statement;
 	}
 
-	public Void changeClientName(String username, byte[] passwordHash, String client, String newName) throws SQLException {
+	public Void changeClient(String username, byte[] passwordHash, String client, String newName) throws SQLException {
 		PreparedStatement statement = getChangeClient();
 
 		setAuthParameters(statement, username, passwordHash, 1);

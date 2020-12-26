@@ -14,7 +14,7 @@ public final class Product implements Serializable {
 	public final String name;
 	public final double price;
 	public final String addedBy;
-	public final Date addedOn;
+	public final String addedOn;
 
 	private Product(String name, double price, String addedBy, Date addedOn) {
 		super();
@@ -22,7 +22,7 @@ public final class Product implements Serializable {
 		this.name = name;
 		this.price = price;
 		this.addedBy = addedBy;
-		this.addedOn = addedOn;
+		this.addedOn = Utils.formatDateIso(addedOn);
 	}
 
 	@Override

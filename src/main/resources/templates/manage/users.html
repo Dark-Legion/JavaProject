@@ -14,7 +14,6 @@
 	</style>
 </head>
 <body>
-	<p>Users</p>
 	<fieldset>
 		<form action="/main">
 			<button type="submit">Return to main</button>
@@ -28,6 +27,7 @@
 			<button type="submit">Next page</button>
 		</form>
 	</fieldset>
+	<p>Users</p>
 	<table>
 		<thead>
 			<tr>
@@ -35,6 +35,7 @@
 				<th>Administrator</th>
 				<th>Added by</th>
 				<th>Added on</th>
+				<th colspan="6">Actions</th>
 			</tr>
 		</thead>
 		<tbody>
@@ -44,6 +45,20 @@
 					<td th:text="${user.isAdmin}"/>
 					<td th:text="${user.addedBy}"/>
 					<td th:text="${user.addedOn}"/>
+					<th:block th:if="${user.isAdmin}">
+						<td colspan="3">Edit</td>
+						<td colspan="3">Delete</td>
+					</th:block>
+					<th:block th:unless="${user.isAdmin}">
+						<td colspan="2">Edit</td>
+						<td colspan="2">Delete</td>
+						<td colspan="2">
+							<form action="/sales/specific" method="get">
+								<input type="hidden" name="seller" th:value="${user.name}" />
+								<button type="submit">Sales Report</button>
+							</form>
+						</td>
+					</th:block>
 				</tr>
 			</th:block>
 		</tbody>

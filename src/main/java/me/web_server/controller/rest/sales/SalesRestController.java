@@ -22,13 +22,13 @@ import me.web_server.controller.rest.GenericRestController;
 import me.web_server.Hasher;
 import me.web_server.model.SaleUnit;
 import me.web_server.service.GenericService;
-import me.web_server.service.SaleService;
+import me.web_server.service.SalesService;
 
 @RestController
 @RequestMapping("/api/sales")
-public class SalesController extends GenericRestController {
+public class SalesRestController extends GenericRestController {
 	@Autowired
-	private SaleService saleService;
+	private SalesService salesService;
 
 	@GetMapping("/{page}")
 	public Callable<HashMap<String, Object>> getSaleReport(
@@ -40,7 +40,7 @@ public class SalesController extends GenericRestController {
 	) {
 		return GenericService.handleAsyncRestRequest(
 			() -> {
-				return saleService.getSalesReport(username, Hasher.hash(password), start, end, page);
+				return salesService.getSalesReport(username, Hasher.hash(password), start, end, page);
 			}
 		);
 	}
@@ -54,7 +54,7 @@ public class SalesController extends GenericRestController {
 	) {
 		return GenericService.handleAsyncRestRequest(
 			() -> {
-				return saleService.getSalesReportPageCount(username, Hasher.hash(password), start, end);
+				return salesService.getSalesReportPageCount(username, Hasher.hash(password), start, end);
 			}
 		);
 	}
@@ -115,7 +115,7 @@ public class SalesController extends GenericRestController {
 					saleUnits = saleUnitList.toArray(SaleUnit[]::new);
 				}
 
-				saleService.addSale(username, Hasher.hash(password), client, saleUnits);
+				salesService.addSale(username, Hasher.hash(password), client, saleUnits);
 				
 				return null;
 			}

@@ -59,7 +59,7 @@ public class ManageProductsController {
 								}
 							}
 
-							model.addAttribute("page_count", pageCount);
+							model.addAttribute("pages", pageCount);
 
 							return ModelAndViews.PAGE_SELECT;
 						},

@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title th:if="${pages == null}">Select Period</title>
+	<title th:unless="${pages == null}">Select Page</title>
+	<style>
+		fieldset * {
+			display: inline-block;
+		}
+	</style>
+</head>
+<body>
+	<fieldset>
+		<form action="/main">
+			<button type="submit">Return to main</button>
+		</form>
+		<th:block th:unless="${pages == null}">
+			<form method="get">
+				<th:block th:unless="${seller == null}">
+					<input type="hidden" name="seller" th:value="${seller}" />
+				</th:block>
+				<button type="submit">Choose another period</button>
+			</form>
+		</th:block>
+	</fieldset>
+	<p th:if="${pages == null}">Please select period:</p>
+	<p th:unless="${pages == null}">Please select page:</p>
+	<fieldset>
+		<th:block th:if="${pages == null}">
+			<form method="get">
+				<th:block th:unless="${seller == null}">
+					<input type="hidden" name="seller" th:value="${seller}" />
+				</th:block>
+				<label for="start">Period start:</label>
+				<input type="date" name="start" />
+				<label for="end">Period end:</label>
+				<input type="date" name="end" />
+				<br />
+				<button type="submit">Set period</button>
+			</form>
+		</th:block>
+		<th:block th:unless="${pages == null}">
+			<th:block th:each="z : ${#numbers.sequence(1, pages)}">
+				<form method="get">
+					<th:block th:unless="${seller == null}">
+						<input type="hidden" name="seller" th:value="${seller}" />
+					</th:block>
+					<input type="hidden" name="start" th:value="${start}" />
+					<input type="hidden" name="end" th:value="${end}" />
+					<input type="hidden" name="page" th:value="${z}" />
+					<button type="submit" th:text="${z}" />
+				</form>
+			</th:block>
+		</th:block>
+	</fieldset>
+</body>
+</html>

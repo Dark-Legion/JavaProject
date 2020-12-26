@@ -14,7 +14,7 @@ import org.springframework.stereotype.Repository;
 import me.web_server.model.SaleUnit;
 
 @Repository
-public class SaleDao extends PostgreSqlDao {
+public class SalesDao extends PostgreSqlDao {
 	private final static String ADD_SALE = NAME_PREFIX + "\"add_sale\"(?, ?, ?, ?)";
 	private final static String GET_SALES_REPORT = NAME_PREFIX + "\"get_sales_report\"(?, ?, ?, ?, ?)";
 	private final static String GET_SALES_REPORT_PAGE_COUNT = NAME_PREFIX + "\"get_sales_report_page_count\"(?, ?, ?, ?)";
@@ -27,7 +27,7 @@ public class SaleDao extends PostgreSqlDao {
 	private final ThreadLocal<PreparedStatement> getSalesReportForSeller = new ThreadLocal<>();
 	private final ThreadLocal<CallableStatement> getSalesReportForSellerPageCount = new ThreadLocal<>();
 
-	protected SaleDao() {
+	protected SalesDao() {
 		typeMapping.put(
 			Pattern.compile("^\\((?:\\\".+\\\"|.+),\\d+,(?:\\d+(?:\\.(?:\\d+)?)?|\\.\\d+)\\)$"),
 			(String value) -> {

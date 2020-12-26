@@ -22,6 +22,8 @@ public class ModelAndViews {
 	public final static ModelAndView MANAGE_PRODUCTS = new ModelAndView("manage/products");
 	public final static ModelAndView MANAGE_USERS = new ModelAndView("manage/users");
 	public final static ModelAndView MANAGE_USERS_SELF = new ModelAndView("manage/users/self");
+	public final static ModelAndView SALES_REPORT_SELECT = new ModelAndView("sales/select");
+	public final static ModelAndView SALES_REPORT = new ModelAndView("sales/report");
 	public final static ModelAndView INVALID_LOGIN = new ModelAndView("login/invalid", HttpStatus.NOT_ACCEPTABLE);
 	public final static ModelAndView INVALID_SESSION = new ModelAndView("invalidSession", HttpStatus.BAD_REQUEST);
 	public final static ModelAndView ERROR = new ModelAndView("error", HttpStatus.SERVICE_UNAVAILABLE);

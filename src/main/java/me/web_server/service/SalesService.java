@@ -8,13 +8,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import me.web_server.ServiceRequestException;
-import me.web_server.dao.SaleDao;
+import me.web_server.dao.SalesDao;
 import me.web_server.model.SaleUnit;
 
 @Service
-public final class SaleService extends GenericService {
+public final class SalesService extends GenericService {
 	@Autowired
-	private SaleDao dao;
+	private SalesDao dao;
 
 	public Void addSale(String username, byte[] passwordHash, String client, SaleUnit[] saleUnits)
 		throws ServiceRequestException {

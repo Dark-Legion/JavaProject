@@ -19,7 +19,7 @@ import me.web_server.service.UserService;
 
 @RequestMapping("/api/manage/users")
 @RestController
-public class UsersController {
+public class ManageUsersRestController {
 	@Autowired
 	private UserService userService;
 
@@ -48,8 +48,8 @@ public class UsersController {
 	public Callable<HashMap<String, Object>> addUser(
 		@RequestParam("user") String username,
 		@RequestParam("pass") String password,
-		@RequestParam("new_user") String newUsername,
-		@RequestParam("new_pass") String newPassword,
+		@RequestParam("name") String newUsername,
+		@RequestParam("user_pass") String newPassword,
 		@RequestParam("is_admin") Boolean isAdmin
 	) {
 		return GenericService.handleAsyncRestRequest(
@@ -67,8 +67,8 @@ public class UsersController {
 	public Callable<HashMap<String, Object>> changeUser(
 		@RequestParam("user") String username,
 		@RequestParam("pass") String password,
-		@RequestParam("change_user") String user,
-		@RequestParam(name = "new_name", required = false) String newName,
+		@RequestParam("change") String user,
+		@RequestParam(name = "name", required = false) String newName,
 		@RequestParam(name = "new_pass", required = false) String newPassword
 	) {
 		return GenericService.handleAsyncRestRequest(
@@ -86,7 +86,7 @@ public class UsersController {
 	public Callable<HashMap<String, Object>> deleteUser(
 		@RequestParam("user") String username,
 		@RequestParam("pass") String password,
-		@RequestParam("delete_user") String user,
+		@RequestParam("name") String user,
 		@RequestParam("reason") String reason
 	) {
 		return GenericService.handleAsyncRestRequest(

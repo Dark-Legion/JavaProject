@@ -14,7 +14,7 @@ public final class Client implements Serializable {
 	public final String name;
 	public final boolean isCompany;
 	public final String addedBy;
-	public final Date addedOn;
+	public final String addedOn;
 
 	private Client(String name, boolean isCompany, String addedBy, Date addedOn) {
 		super();
@@ -22,7 +22,7 @@ public final class Client implements Serializable {
 		this.name = name;
 		this.isCompany = isCompany;
 		this.addedBy = addedBy;
-		this.addedOn = addedOn;
+		this.addedOn = Utils.formatDateIso(addedOn);
 	}
 
 	@Override

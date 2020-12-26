@@ -3,12 +3,22 @@
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>Select page</title>
+	<title>Select Page</title>
+	<style>
+		fieldset * {
+			display: inline-block;
+		}
+	</style>
 </head>
 <body>
+	<fieldset>
+		<form action="/main">
+			<button type="submit">Return to main</button>
+		</form>
+	</fieldset>
 	<p>Please select page:</p>
 	<fieldset>
-		<th:block th:each="z : ${#numbers.sequence(1, page_count)}">
+		<th:block th:each="z : ${#numbers.sequence(1, pages)}">
 			<form method="get">
 				<input type="hidden" name="page" th:value="${z}" />
 				<button type="submit" th:text="${z}" />

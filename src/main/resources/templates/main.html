@@ -3,7 +3,7 @@
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>Admin Main</title>
+	<title>Main</title>
 	<style>
 		fieldset * {
 			display: inline-block;
@@ -11,7 +11,6 @@
 	</style>
 </head>
 <body>
-	<p>Welcome, <i th:text="${user}" />.</p>
 	<fieldset>
 		<form action="login">
 			<button type="submit">Logout</button>
@@ -35,6 +34,10 @@
 				<button type="submit">Manage clients</button>
 			</form>
 		</th:block>
+		<form action="sales">
+			<button type="submit">Sales report</button>
+		</form>
 	</fieldset>
+	<p>Welcome, <i th:text="${user}" />.</p>
 </body>
 </html>
