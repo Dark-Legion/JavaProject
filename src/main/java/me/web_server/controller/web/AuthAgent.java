@@ -21,11 +21,7 @@ public final class AuthAgent {
 	private final static String PASSWORD_HASH_ATTRIBUTE = "pass";
 
 	public interface AuthAgentCallable {
-		Object call(String username, byte[] passwordHash);
-	}
-
-	public void enableLooseASH(HttpSession session) {
-		AntiSessionHijack.enableLooseASH(session);
+		Object call(String username, byte[] passwordHash) throws ServiceRequestException;
 	}
 
 	public Object authenticateAndCallHandler(
@@ -37,33 +33,6 @@ public final class AuthAgent {
 		boolean loginRedirect
 	) throws ServiceRequestException {
 		if (!AntiSessionHijack.validateSession(session, request)) {
-			return ErrorPage.error(model, "Invalid or invalidated session! Please, login again.");
-		}
-
-		Boolean admin = getAdmin(session);
-		String username = getUsername(session);
-		byte[] passwordHash = getPasswordHash(session);
-
-		if (Utils.nonNullParameters(admin, username, passwordHash)) {
-			if (authenticate(admin, username, passwordHash)) {
-				return (admin ? adminPage.call(username, passwordHash) : sellerPage.call(username, passwordHash));
-			}
-
-			return ModelAndViews.INVALID_LOGIN;
-		}
-
-		return (loginRedirect ? ModelAndViews.LOGIN_REDIRECT : ModelAndViews.INVALID_LOGIN);
-	}
-
-	public Object authenticateAndCallHandlerLooseASH(
-		HttpSession session,
-		HttpServletRequest request,
-		Model model,
-		AuthAgentCallable adminPage,
-		AuthAgentCallable sellerPage,
-		boolean loginRedirect
-	) throws ServiceRequestException {
-		if (!AntiSessionHijack.validateSessionLoose(session, request)) {
 			return ErrorPage.error(model, "Invalid or invalidated session! Please, login again.");
 		}
 

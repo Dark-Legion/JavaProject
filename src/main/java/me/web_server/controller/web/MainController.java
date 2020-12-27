@@ -23,7 +23,7 @@ public class MainController {
 	@GetMapping
 	public Callable<Object> mainGet(HttpSession session, HttpServletRequest request, Model model) throws ServiceRequestException {
 		return GenericService.handleAsyncWebRequest(
-			() -> authAgent.authenticateAndCallHandlerLooseASH(
+			() -> authAgent.authenticateAndCallHandler(
 				session,
 				request,
 				model,

@@ -4,9 +4,7 @@ import java.util.HashMap;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.servlet.error.ErrorController;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,29 +14,17 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
-import me.web_server.controller.web.AuthAgent;
 import me.web_server.controller.web.ErrorPage;
 import me.web_server.service.GenericService;
 
 @Controller
 public class ErrorPageController implements ErrorController {
-	@Autowired
-	private AuthAgent authAgent;
-
 	@Override
 	public String getErrorPath() {
 		return "/error";
 	}
 
 	private ModelAndView handlePageError(HttpServletRequest request, Model model, Exception exception) {
-		{
-			HttpSession session = request.getSession(false);
-
-			if (session != null) {
-				authAgent.enableLooseASH(session);
-			}
-		}
-
 		String message = exception.getMessage();
 
 		return ErrorPage.error(model, message == null ? "Service unavailable!" : message);
