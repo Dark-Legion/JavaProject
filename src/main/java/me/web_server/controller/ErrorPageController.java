@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
+import me.web_server.Utils;
 import me.web_server.controller.web.ErrorPage;
 import me.web_server.service.GenericService;
 
@@ -44,14 +45,17 @@ public class ErrorPageController implements ErrorController {
 		boolean restError = false;
 
 		{
-			String url = request.getAttribute(RequestDispatcher.FORWARD_REQUEST_URI).toString();
+			String url = Utils.safeCast(String.class, request.getAttribute(RequestDispatcher.FORWARD_REQUEST_URI));
 
-			restError = url.equals("/api");
+			if (url != null) {
+				restError = url.equals("/api");
 
-			if (!restError) {
-				restError |= url.startsWith("/api/");
+				if (!restError) {
+					restError |= url.startsWith("/api/");
+				}
 			}
 		}
+			
 
 		return (
 			restError ?

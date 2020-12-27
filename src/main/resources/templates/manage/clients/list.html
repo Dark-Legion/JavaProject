@@ -5,16 +5,17 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>Manage Clients</title>
 	<style>
-		fieldset#head * {
+		fieldset.list * {
 			display: inline-block;
 		}
-		table * {
+		table > thead > tr > th,
+		table > tbody > tr > td {
 			border: 1px solid black;
 		}
 	</style>
 </head>
 <body>
-	<fieldset id="head">
+	<fieldset class="list">
 		<form action="/main">
 			<button type="submit">Return to main</button>
 		</form>
@@ -35,15 +36,30 @@
 				<th>Company</th>
 				<th>Added by</th>
 				<th>Added on</th>
+				<th colspan="2">Actions</th>
 			</tr>
 		</thead>
 		<tbody>
 			<th:block th:each="client : ${clients}">
 				<tr>
-					<td th:text="${client.name}"/>
-					<td th:text="${client.isCompany}"/>
-					<td th:text="${client.addedBy}"/>
-					<td th:text="${client.addedOn}"/>
+					<td th:text="${client.name}" />
+					<td th:text="${client.isCompany}" />
+					<td th:text="${client.addedBy}" />
+					<td th:text="${client.addedOn}" />
+					<td style="border: none;">
+						<form method="post">
+							<input type="hidden" name="action" value="edit" />
+							<input type="hidden" name="client" th:value="${client.name}" />
+							<button type="submit">Edit</button>
+						</form>
+					</td>
+					<td style="border: none;">
+						<form method="post">
+							<input type="hidden" name="action" value="delete" />
+							<input type="hidden" name="client" th:value="${client.name}" />
+							<button type="submit">Delete</button>
+						</form>
+					</td>
 				</tr>
 			</th:block>
 		</tbody>

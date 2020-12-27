@@ -5,13 +5,13 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>Manage Your Profile</title>
 	<style>
-		fieldset#head * {
+		fieldset.list * {
 			display: inline-block;
 		}
 	</style>
 </head>
 <body>
-	<fieldset id="head">
+	<fieldset class="list">
 		<form action="/main">
 			<button type="submit">Return to main</button>
 		</form>
@@ -19,7 +19,7 @@
 	<p>Manage Your Profile</p>
 	<form method="post">
 		<label for="new_pass">Enter your new password:</label>
-		<input type="password" name="new_pass" />
+		<input type="password" name="new_pass" required="" />
 		<button type="submit">Change password</button>
 	</form>
 </body>

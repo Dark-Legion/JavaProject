@@ -29,7 +29,7 @@ public class SalesDao extends PostgreSqlDao {
 
 	protected SalesDao() {
 		typeMapping.put(
-			Pattern.compile("^\\((?:\\\".+\\\"|.+),\\d+,(?:\\d+(?:\\.(?:\\d+)?)?|\\.\\d+)\\)$"),
+			Pattern.compile("^\\((?:\\\".+\\\"|.+),(?:\\d+(?:\\.(?:\\d+)?)?|\\.\\d+),\\d+\\)$"),
 			(String value) -> {
 				value = value.substring(1, value.length() - 1);
 
@@ -44,7 +44,7 @@ public class SalesDao extends PostgreSqlDao {
 				left = left.replaceAll("\"\"", "\"");
 				left = left.replaceAll("\\\\\\\\", "\\\\");
 
-				return SaleUnit.load(left, Integer.parseInt(middle), Double.parseDouble(right));
+				return SaleUnit.load(left, Double.parseDouble(middle), Integer.parseInt(right));
 			}
 		);
 	}

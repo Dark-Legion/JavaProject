@@ -13,12 +13,14 @@ import org.springframework.stereotype.Repository;
 public class ClientDao extends PostgreSqlDao {
 	private final static String ADD_CLIENT = NAME_PREFIX + "\"add_client\"(?, ?, ?, ?)";
 	private final static String CHANGE_CLIENT = NAME_PREFIX + "\"change_client\"(?, ?, ?, ?)";
+	private final static String CLIENT_EXISTS = NAME_PREFIX + "\"client_exists\"(?, ?, ?)";
 	private final static String DELETE_CLIENT = NAME_PREFIX + "\"delete_client\"(?, ?, ?, ?)";
 	private final static String GET_CLIENT_LIST = NAME_PREFIX + "\"get_client_list\"(?, ?, ?)";
 	private final static String GET_CLIENT_LIST_PAGE_COUNT = NAME_PREFIX + "\"get_client_list_page_count\"(?, ?)";
 
 	private final ThreadLocal<PreparedStatement> addClient = new ThreadLocal<>();
 	private final ThreadLocal<PreparedStatement> changeClient = new ThreadLocal<>();
+	private final ThreadLocal<CallableStatement> clientExists = new ThreadLocal<>();
 	private final ThreadLocal<PreparedStatement> deleteClient = new ThreadLocal<>();
 	private final ThreadLocal<PreparedStatement> getClientList = new ThreadLocal<>();
 	private final ThreadLocal<CallableStatement> getClientListPageCount = new ThreadLocal<>();
@@ -67,6 +69,29 @@ public class ClientDao extends PostgreSqlDao {
 		statement.execute();
 
 		return null;
+	}
+
+	private CallableStatement getClientExists() throws SQLException {
+		CallableStatement statement = clientExists.get();
+
+		if (statement == null) {
+			statement = getDbConnection().prepareCall("{ ? = call " + CLIENT_EXISTS + " }");
+			statement.registerOutParameter(1, Types.BOOLEAN);
+			clientExists.set(statement);
+		}
+
+		return statement;
+	}
+
+	public boolean clientExists(String username, byte[] passwordHash, String client) throws SQLException {
+		CallableStatement statement = getClientExists();
+
+		setAuthParameters(statement, username, passwordHash, 2);
+		statement.setString(4, client);
+
+		statement.execute();
+
+		return statement.getBoolean(1);
 	}
 
 	private PreparedStatement getDeleteClient() throws SQLException {

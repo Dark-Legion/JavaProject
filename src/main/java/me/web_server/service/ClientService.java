@@ -22,6 +22,10 @@ public final class ClientService extends GenericService {
 		return dao.handleSqlQuery(() -> dao.changeClient(username, passwordHash, client, newName));
 	}
 
+	public boolean clientExists(String username, byte[] passwordHash, String client) throws ServiceRequestException {
+		return dao.handleSqlQuery(() -> dao.clientExists(username, passwordHash, client));
+	}
+
 	public Void deleteClient(String username, byte[] passwordHash, String client, String reason) throws ServiceRequestException {
 		return dao.handleSqlQuery(() -> dao.deleteClient(username, passwordHash, client, reason));
 	}

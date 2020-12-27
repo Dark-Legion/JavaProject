@@ -168,7 +168,7 @@ public class UserDao extends PostgreSqlDao {
 		if (statement == null) {
 			statement = getDbConnection().prepareCall("{ ? = call " + SELLER_EXISTS + " }");
 			statement.registerOutParameter(1, Types.BOOLEAN);
-			getUserListPageCount.set(statement);
+			sellerExists.set(statement);
 		}
 
 		return statement;

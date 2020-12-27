@@ -28,7 +28,7 @@ public class ManageProductsController {
 	private ProductService productService;
 
 	@GetMapping
-	public Callable<Object> getUsers(
+	public Callable<Object> getProducts(
 		HttpSession session,
 		HttpServletRequest request,
 		Model model,

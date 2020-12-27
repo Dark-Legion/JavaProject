@@ -81,6 +81,8 @@ public class SalesController {
 		@RequestParam(name = "end", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date end,
 		@RequestParam(name = "page", required = false) Integer page
 	) {
+		model.addAttribute("specificSeller", false);
+
 		return GenericService.handleAsyncWebRequest(
 			() -> authAgent.authenticateAndCallHandler(
 				session,

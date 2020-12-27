@@ -1,5 +1,6 @@
 package me.web_server.dao;
 
+import java.sql.Array;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -18,6 +19,7 @@ import org.springframework.jdbc.CannotGetJdbcConnectionException;
 import org.springframework.jdbc.core.support.JdbcDaoSupport;
 
 import me.web_server.ServiceRequestException;
+import me.web_server.Utils;
 
 public abstract class GenericDao extends JdbcDaoSupport {
 	@Autowired
@@ -90,10 +92,19 @@ public abstract class GenericDao extends JdbcDaoSupport {
 
 			for (int z = 0; z < columns; ++z) {
 				int columnType = metadata.getColumnType(z + 1);
-				if (columnType == Types.ARRAY || columnType == Types.OTHER) {
-					try {
-						Object[] objects = Object[].class.cast(set.getArray(z + 1).getArray());
 
+				if (columnType == Types.ARRAY || columnType == Types.OTHER) {
+					Object[] objects = null;
+
+					{
+						Array array = set.getArray(z + 1);
+
+						if (array != null) {
+							objects = Utils.safeCast(Object[].class, array.getArray());
+						}
+					}
+
+					if (objects != null) {
 						object_loop: for (int z_object = 0; z_object < objects.length; ++z_object) {
 							String value = objects[z_object].toString();
 							
@@ -105,11 +116,11 @@ public abstract class GenericDao extends JdbcDaoSupport {
 								}
 							}
 						}
+					}
 
-						map.put(metadata.getColumnName(z + 1), objects);
+					map.put(metadata.getColumnName(z + 1), objects);
 
-						continue;
-					} catch (ClassCastException | SQLException exception) {}
+					continue;
 				}
 
 				map.put(

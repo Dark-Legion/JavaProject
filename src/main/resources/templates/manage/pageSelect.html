@@ -5,19 +5,19 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>Select Page</title>
 	<style>
-		fieldset#head * {
+		fieldset.list * {
 			display: inline-block;
 		}
 	</style>
 </head>
 <body>
-	<fieldset id="head">
+	<fieldset class="list">
 		<form action="/main">
 			<button type="submit">Return to main</button>
 		</form>
 	</fieldset>
 	<p>Please select page:</p>
-	<fieldset>
+	<fieldset class="list">
 		<th:block th:each="z : ${#numbers.sequence(1, pages)}">
 			<form method="get">
 				<input type="hidden" name="page" th:value="${z}" />

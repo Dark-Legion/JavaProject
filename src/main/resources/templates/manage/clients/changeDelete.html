@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title th:if="${edit}">Edit Client</title>
+	<title th:unless="${edit}">Delete Client</title>
+	<style>
+		fieldset.list * {
+			display: inline-block;
+		}
+		table > thead > tr > th,
+		table > tbody > tr > td {
+			border: 1px solid black;
+		}
+	</style>
+</head>
+<body>
+	<fieldset class="list">
+		<form action="/main">
+			<button type="submit">Return to main</button>
+		</form>
+	</fieldset>
+	<fieldset th:unless="${error == null}">
+		<p>Error:</p>
+		<fieldset>
+			<p th:text="${error}" />
+		</fieldset>
+	</fieldset>
+	<p th:if="${edit}">Edit Client</p>
+	<p th:unless="${edit}">Delete Client</p>
+	<fieldset>
+		<form method="post">
+			<input type="hidden" name="client" th:value="${client}" />
+			<th:block th:if="${edit}">
+				<input type="hidden" name="action" th:value="edit" />
+			</th:block>
+			<th:block th:unless="${edit}">
+				<input type="hidden" name="action" th:value="delete" />
+			</th:block>
+			<th:block th:if="${edit}">
+				<input type="hidden" name="commitEdit" value="" />
+				<table>
+					<thead>
+						<tr>
+							<th>Client</th>
+							<th>New name</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td th:text="${client}" />
+							<td>
+								<input type="text" name="new_name" placeholder="(Unchanged)" />
+							</td>
+							<td>
+								<button type="submit">Update</button>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</th:block>
+			<th:block th:unless="${edit}">
+				<input type="hidden" name="confirmDelete" value="" />
+				<table>
+					<thead>
+						<tr>
+							<th>Client</th>
+							<th>Delete reason</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td th:text="${client}" />
+							<td>
+								<input type="text" name="reason" required="" />
+							</td>
+							<td>
+								<button type="submit">Delete</button>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</th:block>
+		</form>
+	</fieldset>
+</body>
+</html>

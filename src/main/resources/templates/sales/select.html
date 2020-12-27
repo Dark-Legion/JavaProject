@@ -3,63 +3,73 @@
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title th:if="${seller == null}">Select Seller</title>
-	<title th:unless="${seller == null}" th:if="${pages == null}">Select Period</title>
+	<title th:if="${specificSeller && seller == null}">Select Seller</title>
+	<title th:unless="${specificSeller && seller == null}" th:if="${pages == null}">Select Period</title>
 	<title th:unless="${pages == null}">Select Page</title>
 	<style>
-		fieldset#head * {
+		fieldset.list * {
 			display: inline-block;
 		}
 	</style>
 </head>
 <body>
-	<fieldset id="head">
+	<fieldset class="list">
 		<form action="/main">
 			<button type="submit">Return to main</button>
 		</form>
-		<th:block th:unless="${seller == null}">
+		<th:block th:if="${specificSeller}" th:unless="${seller == null}">
 			<form method="get">
 				<button type="submit">Choose another seller</button>
 			</form>
 		</th:block>
 		<th:block th:unless="${pages == null}">
 			<form method="get">
-				<th:block th:unless="${seller == null}">
+				<th:block th:unless="${specificSeller && seller == null}">
 					<input type="hidden" name="seller" th:value="${seller}" />
 				</th:block>
 				<button type="submit">Choose another period</button>
 			</form>
 		</th:block>
 	</fieldset>
-	<p th:if="${seller == null}">Please select seller:</p>
-	<p th:unless="${seller == null}" th:if="${pages == null}">Please select period:</p>
+	<fieldset th:unless="${error == null}">
+		<p>Error:</p>
+		<fieldset>
+			<p th:text="${error}" />
+		</fieldset>
+	</fieldset>
+	<p th:if="${specificSeller && seller == null}">Please select seller:</p>
+	<p th:unless="${specificSeller && seller == null}" th:if="${pages == null}">Please select period:</p>
 	<p th:unless="${pages == null}">Please select page:</p>
-	<fieldset>
-		<th:block th:if="${seller == null}">
+	<th:block th:if="${specificSeller && seller == null}">
+		<fieldset>
 			<form method="get">
 				<label for="seller">Select seller:</label>
-				<input type="text" name="seller" />
+				<input type="text" name="seller" required="" />
 				<br />
 				<button type="submit">Select seller</button>
 			</form>
-		</th:block>
-		<th:block th:unless="${seller == null}" th:if="${pages == null}">
+		</fieldset>
+	</th:block>
+	<th:block th:unless="${specificSeller && seller == null}" th:if="${pages == null}">
+		<fieldset>
 			<form method="get">
-				<th:block th:unless="${seller == null}">
+				<th:block th:unless="${specificSeller && seller == null}">
 					<input type="hidden" name="seller" th:value="${seller}" />
 				</th:block>
 				<label for="start">Period start:</label>
-				<input type="date" name="start" />
+				<input type="date" name="start" required="" />
 				<label for="end">Period end:</label>
-				<input type="date" name="end" />
+				<input type="date" name="end" required="" />
 				<br />
 				<button type="submit">Set period</button>
 			</form>
-		</th:block>
-		<th:block th:unless="${pages == null}">
+		</fieldset>
+	</th:block>
+	<th:block th:unless="${pages == null}">
+		<fieldset class="list">
 			<th:block th:each="z : ${#numbers.sequence(1, pages)}">
 				<form method="get">
-					<th:block th:unless="${seller == null}">
+					<th:block th:unless="${specificSeller && seller == null}">
 						<input type="hidden" name="seller" th:value="${seller}" />
 					</th:block>
 					<input type="hidden" name="start" th:value="${start}" />
@@ -68,7 +78,7 @@
 					<button type="submit" th:text="${z}" />
 				</form>
 			</th:block>
-		</th:block>
-	</fieldset>
+		</fieldset>
+	</th:block>
 </body>
 </html>

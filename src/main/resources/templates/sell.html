@@ -5,20 +5,120 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>New Sale</title>
 	<style>
-		fieldset#head * {
+		fieldset.list * {
 			display: inline-block;
 		}
+		table > thead > tr > th,
+		table > tbody > tr > td {
+			border: 1px solid black;
+		}
 	</style>
+	<script>
+		function addRow() {
+			var tag = document.createElement('tr');
+			tag.innerHTML = '<td><input type="text" name="product" required="" /></td><td><input type="text" name="price_per_unit" required="" /></td><td><input type="text" name="quantity" required="" /></td><td><button onclick="this.parentNode.parentNode.remove();">Delete row</button></td>';
+			document.getElementById('products').appendChild(tag);
+		}
+	</script>
+	<noscript>
+		<style>
+			html > body > *:not(noscript) {
+				display: none;
+			}
+		</style>
+	</noscript>
 </head>
 <body>
-	<fieldset id="head">
+	<noscript>
+		<fieldset>
+			<p style="color: red;">Error! Usage of JavaScript is mendatory for using this functionallity!</p>
+		</fieldset>
+	</noscript>
+	<fieldset class="list">
 		<form action="/main">
 			<button type="submit">Return to main</button>
 		</form>
 	</fieldset>
-	<form method="post" id="saleForm">
-		<label for="client">Client:</label>
-		<input type="text" name="client" />
-	</form>
+	<th:block th:unless="${error == null}">
+		<fieldset>
+			<p>Error:</p>
+			<fieldset>
+				<p th:text="${error}" />
+			</fieldset>
+		</fieldset>
+	</th:block>
+	<p>Please fill in the information:</p>
+	<fieldset>
+		<form method="post">
+			<label for="client">Client:</label>
+			<th:block th:if="${client == null}">
+				<input type="text" name="client" required="" />
+			</th:block>
+			<th:block th:unless="${client == null}">
+				<input type="text" name="client" required="" th:value="${client}" />
+			</th:block>
+			<button type="submit">Submit</button>
+			<table>
+				<thead>
+					<tr>
+						<th>Product</th>
+						<th>Price per unit</th>
+						<th>Quantity</th>
+						<th>
+							<button onclick="addRow();">Add new row</button>
+						</th>
+					</tr>
+				</thead>
+				<tbody id="products">
+					<th:block th:unless="${products == null}">
+						<th:block th:each="product : ${products}">
+							<tr>
+								<th:block th:if="${product == null}">
+									<td>
+										<input type="text" name="product" required="" />
+									</td>
+									<td>
+										<input type="text" name="price_per_unit" required="" />
+									</td>
+									<td>
+										<input type="text" name="quantity" required="" />
+									</td>
+								</th:block>
+								<th:block th:unless="${product == null}">
+									<td>
+										<th:block th:if="${product.name == null}">
+											<input type="text" name="product" required="" />
+										</th:block>
+										<th:block th:unless="${product.name == null}">
+											<input type="text" name="product" th:value="${product.name}" required="" />
+										</th:block>
+									</td>
+									<td>
+										<th:block th:if="${product.pricePerUnit == null}">
+											<input type="text" name="price_per_unit" required="" />
+										</th:block>
+										<th:block th:unless="${product.pricePerUnit == null}">
+											<input type="text" name="price_per_unit" th:value="${product.pricePerUnit}" required="" />
+										</th:block>
+									</td>
+									<td>
+										<th:block th:if="${product.quantity == null}">
+											<input type="text" name="quantity" required="" />
+										</th:block>
+										<th:block th:unless="${product.quantity == null}">
+											<input type="text" name="quantity" th:value="${product.quantity}" required="" />
+										</th:block>
+									</td>
+								</th:block>
+								<td style="border: none;">
+									<button onclick="this.parent.parent.remove();">Delete row</button>
+								</td>
+							</tr>
+						</th:block>
+					</th:block>
+				</tbody>
+			</table>
+		</form>
+	</fieldset>
 </body>
 </html>

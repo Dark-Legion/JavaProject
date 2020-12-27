@@ -41,6 +41,8 @@ public class SalesSpecificController {
 		@RequestParam(name = "end", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date end,
 		@RequestParam(name = "page", required = false) Integer page
 	) {
+		model.addAttribute("specificSeller", true);
+
 		return GenericService.handleAsyncWebRequest(
 			() -> authAgent.authenticateAndCallHandler(
 				session,
@@ -49,6 +51,8 @@ public class SalesSpecificController {
 				(String username, byte[] passwordHash) -> {
 					if (userService.sellerExists(username, passwordHash, seller)) {
 						model.addAttribute("seller", seller);
+					} else if (seller != null) {
+						model.addAttribute("error", "No such seller exists!");
 					}
 
 					model.addAttribute("hideSeller", true);

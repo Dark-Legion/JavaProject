@@ -5,16 +5,17 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>Manage Products</title>
 	<style>
-		fieldset#head * {
+		fieldset.list * {
 			display: inline-block;
 		}
-		table * {
+		table > thead > tr > th,
+		table > tbody > tr > td {
 			border: 1px solid black;
 		}
 	</style>
 </head>
 <body>
-	<fieldset id="head">
+	<fieldset class="list">
 		<form action="/main">
 			<button type="submit">Return to main</button>
 		</form>
@@ -40,10 +41,24 @@
 		<tbody>
 			<th:block th:each="product : ${products}">
 				<tr>
-					<td th:text="${product.name}"/>
-					<td th:text="${product.price}"/>
-					<td th:text="${product.addedBy}"/>
-					<td th:text="${product.addedOn}"/>
+					<td th:text="${product.name}" />
+					<td th:text="${product.price}" />
+					<td th:text="${product.addedBy}" />
+					<td th:text="${product.addedOn}" />
+					<td style="border: none;">
+						<form method="post">
+							<input type="hidden" name="action" value="edit" />
+							<input type="hidden" name="product" th:value="${product.name}" />
+							<button type="submit">Edit</button>
+						</form>
+					</td>
+					<td style="border: none;">
+						<form method="post">
+							<input type="hidden" name="action" value="delete" />
+							<input type="hidden" name="product" th:value="${product.name}" />
+							<button type="submit">Delete</button>
+						</form>
+					</td>
 				</tr>
 			</th:block>
 		</tbody>

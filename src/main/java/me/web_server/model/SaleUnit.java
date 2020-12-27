@@ -11,15 +11,15 @@ public final class SaleUnit implements Serializable {
 	private final static long serialVersionUID = 0;
 
 	public final String product;
-	public final int quantity;
 	public final double pricePerUnit;
+	public final int quantity;
 
-	private SaleUnit(String product, int quantity, double pricePerUnit) {
+	private SaleUnit(String product, double pricePerUnit, int quantity) {
 		super();
 
 		this.product = product;
-		this.quantity = quantity;
 		this.pricePerUnit = pricePerUnit;
+		this.quantity = quantity;
 	}
 
 	@Override
@@ -28,6 +28,7 @@ public final class SaleUnit implements Serializable {
 
 		if (obj != null) {
 			return product.equals(other.product) &&
+				pricePerUnit == other.pricePerUnit &&
 				quantity == other.quantity;
 		}
 
@@ -36,17 +37,17 @@ public final class SaleUnit implements Serializable {
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(product, quantity, pricePerUnit);
+		return Objects.hash(product, pricePerUnit, quantity);
 	}
 
 	@Override
 	public String toString() {
-		return "(\"" + product + "\", " + quantity + ", " + pricePerUnit + ")";
+		return "(\"" + product + "\", " + pricePerUnit + ", " + quantity + ")";
 	}
 
-	public static SaleUnit load(String product, Integer quantity, Double pricePerUnit) {
-		if (Utils.nonNullParameters(product, quantity, pricePerUnit)) {
-			return new SaleUnit(product, quantity, pricePerUnit);
+	public static SaleUnit load(String product, Double pricePerUnit, Integer quantity) {
+		if (Utils.nonNullParameters(product, pricePerUnit, quantity)) {
+			return new SaleUnit(product, pricePerUnit, quantity);
 		} else {
 			return null;
 		}
@@ -54,10 +55,10 @@ public final class SaleUnit implements Serializable {
 
 	public static SaleUnit load(HashMap<String, Object> map) {
 		String product = Utils.safeCast(String.class, map.get("product"));
-		Integer quantity = Utils.safeCast(Integer.class, map.get("quantity"));
 		Double pricePerUnit = Utils.safeCast(Double.class, map.get("price_per_unit"));
+		Integer quantity = Utils.safeCast(Integer.class, map.get("quantity"));
 
-		return load(product, quantity, pricePerUnit);
+		return load(product, pricePerUnit, quantity);
 	}
 
 	public static SaleUnit[] loadList(ArrayList<HashMap<String, Object>> list) {
