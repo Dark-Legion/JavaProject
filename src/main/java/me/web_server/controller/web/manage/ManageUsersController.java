@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import me.web_server.controller.web.AuthAgent;
+import me.web_server.controller.web.ErrorPage;
 import me.web_server.controller.web.ModelAndViews;
 import me.web_server.model.User;
 import me.web_server.service.GenericService;
@@ -39,38 +40,29 @@ public class ManageUsersController {
 				request,
 				model,
 				(String username, byte[] passwordHash) -> {
-					return GenericService.handleWebRequest(
-						() -> {
-							int pageCount = userService.getUserListPageCount(username, passwordHash);
+					int pageCount = userService.getUserListPageCount(username, passwordHash);
 
-							if (page != null) {
-								if (0 < page && page <= pageCount) {
-									model.addAttribute("users", User.loadList(userService.getUserList(username, passwordHash, page)));
+					if (page != null) {
+						if (0 < page && page <= pageCount) {
+							model.addAttribute("users", User.loadList(userService.getUserList(username, passwordHash, page)));
 
-									if (page > 1) {
-										model.addAttribute("prev", page - 1);
-									}
-
-									if (page != pageCount) {
-										model.addAttribute("next", page + 1);
-									}
-
-									return ModelAndViews.MANAGE_USERS;
-								}
+							if (page > 1) {
+								model.addAttribute("prev", page - 1);
 							}
 
-							model.addAttribute("pages", pageCount);
+							if (page != pageCount) {
+								model.addAttribute("next", page + 1);
+							}
 
-							return ModelAndViews.PAGE_SELECT;
-						},
-						model
-					);
-				},
-				(String username, byte[] passwordHash) -> {
-					model.addAttribute("error", "Insufficient privileges!");
+							return ModelAndViews.MANAGE_USERS;
+						}
+					}
 
-					return ModelAndViews.ERROR;
+					model.addAttribute("pages", pageCount);
+
+					return ModelAndViews.PAGE_SELECT;
 				},
+				(String username, byte[] passwordHash) -> ErrorPage.error(model, "Insufficient privileges!"),
 				true
 			),
 			model

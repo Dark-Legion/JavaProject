@@ -15,16 +15,19 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import me.web_server.controller.web.AuthAgent;
-import me.web_server.controller.web.ModelAndViews;
+import me.web_server.controller.web.ErrorPage;
 import me.web_server.model.Sale;
 import me.web_server.service.GenericService;
 import me.web_server.service.SalesService;
+import me.web_server.service.UserService;
 
 @Controller
 @RequestMapping("/sales/specific")
 public class SalesSpecificController {
 	@Autowired
 	private AuthAgent authAgent;
+	@Autowired
+	private UserService userService;
 	@Autowired
 	private SalesService salesService;
 
@@ -33,7 +36,7 @@ public class SalesSpecificController {
 		HttpSession session,
 		HttpServletRequest request,
 		Model model,
-		@RequestParam("seller") String seller,
+		@RequestParam(name = "seller", required = false) String seller,
 		@RequestParam(name = "start", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date start,
 		@RequestParam(name = "end", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date end,
 		@RequestParam(name = "page", required = false) Integer page
@@ -44,7 +47,9 @@ public class SalesSpecificController {
 				request,
 				model,
 				(String username, byte[] passwordHash) -> {
-					model.addAttribute("seller", seller);
+					if (userService.sellerExists(username, passwordHash, seller)) {
+						model.addAttribute("seller", seller);
+					}
 
 					model.addAttribute("hideSeller", true);
 
@@ -58,12 +63,9 @@ public class SalesSpecificController {
 						() -> Sale.loadList(salesService.getSalesReportForSeller(username, passwordHash, seller, start, end, page)),
 						() -> salesService.getSalesReportForSellerPageCount(username, passwordHash, seller, start, end)
 					);
+					
 				},
-				(String username, byte[] passwordHash) -> {
-					model.addAttribute("error", "Insufficient privileges!");
-
-					return ModelAndViews.ERROR;
-				},
+				(String username, byte[] passwordHash) -> ErrorPage.error(model, "Insufficient privileges!"),
 				true
 			),
 			model

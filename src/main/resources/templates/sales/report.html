@@ -5,7 +5,7 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>Sales Report</title>
 	<style>
-		fieldset * {
+		fieldset#head * {
 			display: inline-block;
 		}
 		table * {
@@ -14,9 +14,12 @@
 	</style>
 </head>
 <body>
-	<fieldset>
+	<fieldset id="head">
 		<form action="/main">
 			<button type="submit">Return to main</button>
+		</form>
+		<form method="get">
+			<button type="submit">Choose another seller</button>
 		</form>
 		<form method="get">
 			<th:block th:unless="${seller == null}">

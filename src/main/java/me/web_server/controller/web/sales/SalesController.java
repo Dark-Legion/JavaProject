@@ -43,38 +43,33 @@ public class SalesController {
 		Integer page,
 		IServiceRequestCallable<Sale[]> reportCallable,
 		IServiceRequestCallable<Integer> pageCountCallable
-	) {
-		return GenericService.handleWebRequest(
-			() -> {
-				if (Utils.nonNullParameters(start, end)) {
-					model.addAttribute("start", Utils.formatDateIso(start));
-					model.addAttribute("end", Utils.formatDateIso(end));
+	) throws ServiceRequestException {
+		if (Utils.nonNullParameters(start, end)) {
+			model.addAttribute("start", Utils.formatDateIso(start));
+			model.addAttribute("end", Utils.formatDateIso(end));
 
-					int pageCount = pageCountCallable.call();
+			int pageCount = pageCountCallable.call();
 
-					if (page != null) {
-						if (0 < page && page <= pageCount) {
-							model.addAttribute("sales", reportCallable.call());
+			if (page != null) {
+				if (0 < page && page <= pageCount) {
+					model.addAttribute("sales", reportCallable.call());
 
-							if (page > 1) {
-								model.addAttribute("prev", page - 1);
-							}
-
-							if (page != pageCount) {
-								model.addAttribute("next", page + 1);
-							}
-
-							return ModelAndViews.SALES_REPORT;
-						}
+					if (page > 1) {
+						model.addAttribute("prev", page - 1);
 					}
 
-					model.addAttribute("pages", pageCount);
-				}
+					if (page != pageCount) {
+						model.addAttribute("next", page + 1);
+					}
 
-				return ModelAndViews.SALES_REPORT_SELECT;
-			},
-			model
-		);
+					return ModelAndViews.SALES_REPORT;
+				}
+			}
+
+			model.addAttribute("pages", pageCount);
+		}
+
+		return ModelAndViews.SALES_REPORT_SELECT;
 	}
 
 	@GetMapping

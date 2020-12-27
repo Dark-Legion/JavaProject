@@ -59,32 +59,22 @@ public class ManageUsersSelfController {
 				request,
 				model,
 				(String username, byte[] passwordHash) -> {
-					return GenericService.handleWebRequest(
-						() -> {
-							byte[] newPasswordHash = Hasher.hash(newPassword);
+					byte[] newPasswordHash = Hasher.hash(newPassword);
 
-							userService.changeUserPassword(username, passwordHash, newPasswordHash);
+					userService.changeUserPassword(username, passwordHash, newPasswordHash);
 
-							authAgent.setPasswordHash(session, newPasswordHash);
+					authAgent.setPasswordHash(session, newPasswordHash);
 
-							return ModelAndViews.MAIN_REDIRECT;
-						},
-						model
-					);
+					return ModelAndViews.MAIN_REDIRECT;
 				},
 				(String username, byte[] passwordHash) -> {
-					return GenericService.handleWebRequest(
-						() -> {
-							byte[] newPasswordHash = Hasher.hash(newPassword);
+					byte[] newPasswordHash = Hasher.hash(newPassword);
 
-							userService.changeUserPassword(username, passwordHash, newPasswordHash);
+					userService.changeUserPassword(username, passwordHash, newPasswordHash);
 
-							authAgent.setPasswordHash(session, newPasswordHash);
+					authAgent.setPasswordHash(session, newPasswordHash);
 
-							return ModelAndViews.MAIN_REDIRECT;
-						},
-						model
-					);
+					return ModelAndViews.MAIN_REDIRECT;
 				},
 				true
 			),

@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import me.web_server.controller.web.AuthAgent;
+import me.web_server.controller.web.ErrorPage;
 import me.web_server.controller.web.ModelAndViews;
 import me.web_server.model.Client;
 import me.web_server.service.ClientService;
@@ -38,38 +39,29 @@ public class ManageClientsController {
 				session,
 				request,
 				model,
+				(String username, byte[] passwordHash) -> ErrorPage.error(model, "Insufficient privileges!"),
 				(String username, byte[] passwordHash) -> {
-					model.addAttribute("error", "Insufficient privileges!");
+					int pageCount = clientService.getClientListPageCount(username, passwordHash);
 
-					return ModelAndViews.ERROR;
-				},
-				(String username, byte[] passwordHash) -> {
-					return GenericService.handleWebRequest(
-						() -> {
-							int pageCount = clientService.getClientListPageCount(username, passwordHash);
+					if (page != null) {
+						if (0 < page && page <= pageCount) {
+							model.addAttribute("clients", Client.loadList(clientService.getClientList(username, passwordHash, page)));
 
-							if (page != null) {
-								if (0 < page && page <= pageCount) {
-									model.addAttribute("clients", Client.loadList(clientService.getClientList(username, passwordHash, page)));
-
-									if (page > 1) {
-										model.addAttribute("prev", page - 1);
-									}
-
-									if (page != pageCount) {
-										model.addAttribute("next", page + 1);
-									}
-
-									return ModelAndViews.MANAGE_CLIENTS;
-								}
+							if (page > 1) {
+								model.addAttribute("prev", page - 1);
 							}
 
-							model.addAttribute("pages", pageCount);
+							if (page != pageCount) {
+								model.addAttribute("next", page + 1);
+							}
 
-							return ModelAndViews.PAGE_SELECT;
-						},
-						model
-					);
+							return ModelAndViews.MANAGE_CLIENTS;
+						}
+					}
+
+					model.addAttribute("pages", pageCount);
+
+					return ModelAndViews.PAGE_SELECT;
 				},
 				true
 			),

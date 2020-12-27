@@ -17,6 +17,7 @@ public class UserDao extends PostgreSqlDao {
 	private final static String DELETE_USER = NAME_PREFIX + "\"delete_user\"(?, ?, ?, ?)";
 	private final static String GET_USER_LIST = NAME_PREFIX + "\"get_user_list\"(?, ?, ?)";
 	private final static String GET_USER_LIST_PAGE_COUNT = NAME_PREFIX + "\"get_user_list_page_count\"(?, ?)";
+	private final static String SELLER_EXISTS = NAME_PREFIX + "\"seller_exists\"(?, ?, ?)";
 
 	private final ThreadLocal<PreparedStatement> addUser = new ThreadLocal<>();
 	private final ThreadLocal<PreparedStatement> changeUserName = new ThreadLocal<>();
@@ -24,6 +25,7 @@ public class UserDao extends PostgreSqlDao {
 	private final ThreadLocal<PreparedStatement> deleteUser = new ThreadLocal<>();
 	private final ThreadLocal<PreparedStatement> getUserList = new ThreadLocal<>();
 	private final ThreadLocal<CallableStatement> getUserListPageCount = new ThreadLocal<>();
+	private final ThreadLocal<CallableStatement> sellerExists = new ThreadLocal<>();
 
 	private PreparedStatement getAddUser() throws SQLException {
 		PreparedStatement statement = addUser.get();
@@ -158,5 +160,28 @@ public class UserDao extends PostgreSqlDao {
 		statement.execute();
 
 		return statement.getInt(1);
+	}
+
+	private CallableStatement getSellerExists() throws SQLException {
+		CallableStatement statement = sellerExists.get();
+
+		if (statement == null) {
+			statement = getDbConnection().prepareCall("{ ? = call " + SELLER_EXISTS + " }");
+			statement.registerOutParameter(1, Types.BOOLEAN);
+			getUserListPageCount.set(statement);
+		}
+
+		return statement;
+	}
+
+	public boolean sellerExists(String username, byte[] passwordHash, String seller) throws SQLException {
+		CallableStatement statement = getSellerExists();
+
+		setAuthParameters(statement, username, passwordHash, 2);
+		statement.setString(4, seller);
+
+		statement.execute();
+
+		return statement.getBoolean(1);
 	}
 }

@@ -43,4 +43,9 @@ public final class UserService extends GenericService {
 		throws ServiceRequestException {
 		return dao.handleSqlQuery(() -> dao.getUserListPageCount(username, passwordHash));
 	}
+
+	public boolean sellerExists(String username, byte[] passwordHash, String seller)
+		throws ServiceRequestException {
+		return dao.handleSqlQuery(() -> dao.sellerExists(username, passwordHash, seller));
+	}
 }
