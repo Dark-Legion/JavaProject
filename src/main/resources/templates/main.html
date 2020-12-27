@@ -5,38 +5,43 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>Main</title>
 	<style>
-		fieldset * {
+		fieldset#head * {
 			display: inline-block;
 		}
 	</style>
 </head>
 <body>
-	<fieldset>
-		<form action="login">
+	<fieldset id="head">
+		<form action="/login">
 			<button type="submit">Logout</button>
 		</form>
-		<form action="manage/users/self">
+		<form action="/manage/users/self">
 			<button type="submit">Change password</button>
 		</form>
 		<th:block th:if="${admin}">
-			<form action="manage/users">
+			<form action="/manage/users">
 				<button type="submit">Manage users</button>
 			</form>
-			<form action="manage/products">
+			<form action="/manage/products">
 				<button type="submit">Manage products</button>
 			</form>
 		</th:block>
 		<th:block th:unless="${admin}">
-			<form action="sell">
+			<form action="/sell">
 				<button type="submit">Register sell</button>
 			</form>
-			<form action="manage/clients">
+			<form action="/manage/clients">
 				<button type="submit">Manage clients</button>
 			</form>
 		</th:block>
-		<form action="sales">
+		<form action="/sales">
 			<button type="submit">Sales report</button>
 		</form>
+		<th:block th:if="${admin}">
+			<form action="/sales/specific">
+				<button type="submit">Sales report for seller</button>
+			</form>
+		</th:block>
 	</fieldset>
 	<p>Welcome, <i th:text="${user}" />.</p>
 </body>

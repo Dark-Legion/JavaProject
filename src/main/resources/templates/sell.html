@@ -3,7 +3,7 @@
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>Error</title>
+	<title>New Sale</title>
 	<style>
 		fieldset#head * {
 			display: inline-block;
@@ -16,14 +16,9 @@
 			<button type="submit">Return to main</button>
 		</form>
 	</fieldset>
-	<fieldset>
-		<p>Something went wrong!</p>
-		<fieldset>
-			<p>Error:</p>
-			<fieldset>
-				<p th:text="${error}"></p>
-			</fieldset>
-		</fieldset>
-	</fieldset>
+	<form method="post" id="saleForm">
+		<label for="client">Client:</label>
+		<input type="text" name="client" />
+	</form>
 </body>
 </html>
