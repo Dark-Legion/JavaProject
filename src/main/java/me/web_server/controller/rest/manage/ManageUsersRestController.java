@@ -53,13 +53,19 @@ public class ManageUsersRestController {
 		@RequestParam("is_admin") Boolean isAdmin
 	) {
 		return GenericService.handleAsyncRestRequest(
-			() -> userService.addUser(
-				username,
-				Hasher.hash(password),
-				newUsername,
-				Hasher.hash(newPassword),
-				isAdmin
-			)
+			() -> {
+				if (newPassword.isEmpty()) {
+					return GenericService.getErrorResultMap("New user's password must not be empty!");
+				}
+
+				return userService.addUser(
+					username,
+					Hasher.hash(password),
+					newUsername,
+					Hasher.hash(newPassword),
+					isAdmin
+				);
+			}
 		);
 	}
 
@@ -72,13 +78,21 @@ public class ManageUsersRestController {
 		@RequestParam(name = "new_pass", required = false) String newPassword
 	) {
 		return GenericService.handleAsyncRestRequest(
-			() -> userService.changeUser(
-				username,
-				Hasher.hash(password),
-				user,
-				newName,
-				(newPassword == null ? null : Hasher.hash(newPassword))
-			)
+			() -> {
+				if (newPassword != null) {
+					if (newPassword.isEmpty()) {
+						return GenericService.getErrorResultMap("User's new password must not be empty!");
+					}
+				}
+
+				return userService.changeUser(
+					username,
+					Hasher.hash(password),
+					user,
+					newName,
+					(newPassword == null ? null : Hasher.hash(newPassword))
+				);
+			}
 		);
 	}
 

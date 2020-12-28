@@ -26,7 +26,13 @@ public class ManageUsersSelfRestController {
 		@RequestParam("new_pass") String newPassword
 	) {
 		return GenericService.handleAsyncRestRequest(
-			() -> userService.changeUserPassword(username, Hasher.hash(password), Hasher.hash(newPassword))
+			() -> {
+				if (newPassword.isEmpty()) {
+					return GenericService.getErrorResultMap("User's new password must not be empty!");
+				}
+
+				return userService.changeUserPassword(username, Hasher.hash(password), Hasher.hash(newPassword));
+			}
 		);
 	}
 }
