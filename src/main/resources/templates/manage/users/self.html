@@ -16,6 +16,12 @@
 			<button type="submit">Return to main</button>
 		</form>
 	</fieldset>
+	<fieldset th:unless="${error == null}">
+		<p>Error:</p>
+		<fieldset>
+			<p th:text="${error}" />
+		</fieldset>
+	</fieldset>
 	<p>Manage Your Profile</p>
 	<form method="post">
 		<label for="new_pass">Enter your new password:</label>

@@ -44,18 +44,18 @@
 					<td th:text="${product.name}" />
 					<td th:text="${product.price}" />
 					<td th:text="${product.addedBy}" />
-					<td th:text="${product.addedOn}" />
+					<td th:text="${#dates.format(product.addedOn, 'dd-MM-yyyy')}" />
 					<td style="border: none;">
 						<form method="post">
 							<input type="hidden" name="action" value="edit" />
-							<input type="hidden" name="product" th:value="${product.name}" />
+							<input type="hidden" name="name" th:value="${product.name}" />
 							<button type="submit">Edit</button>
 						</form>
 					</td>
 					<td style="border: none;">
 						<form method="post">
 							<input type="hidden" name="action" value="delete" />
-							<input type="hidden" name="product" th:value="${product.name}" />
+							<input type="hidden" name="name" th:value="${product.name}" />
 							<button type="submit">Delete</button>
 						</form>
 					</td>

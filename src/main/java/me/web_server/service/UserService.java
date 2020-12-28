@@ -48,4 +48,9 @@ public final class UserService extends GenericService {
 		throws ServiceRequestException {
 		return dao.handleSqlQuery(() -> dao.sellerExists(username, passwordHash, seller));
 	}
+
+	public boolean userExists(String username, byte[] passwordHash, String user)
+		throws ServiceRequestException {
+		return dao.handleSqlQuery(() -> dao.userExists(username, passwordHash, user));
+	}
 }

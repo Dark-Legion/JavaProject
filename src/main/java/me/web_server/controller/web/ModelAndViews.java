@@ -17,6 +17,7 @@ public class ModelAndViews {
 	public final static ModelAndView MAIN_REDIRECT = new ModelAndView("redirect:/main");
 	public final static ModelAndView MAIN = new ModelAndView("main");
 	public final static ModelAndView PAGE_SELECT = new ModelAndView("manage/pageSelect");
+	public final static ModelAndView ADD = new ModelAndView("add");
 	public final static ModelAndView MANAGE_CLIENTS = new ModelAndView("manage/clients/list");
 	public final static ModelAndView CHANGE_DELETE_CLIENT = new ModelAndView("manage/clients/changeDelete");
 	public final static ModelAndView MANAGE_PRODUCTS = new ModelAndView("manage/products/list");

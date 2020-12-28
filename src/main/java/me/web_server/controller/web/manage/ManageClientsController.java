@@ -48,7 +48,10 @@ public class ManageClientsController {
 
 					if (page != null) {
 						if (0 < page && page <= pageCount) {
-							model.addAttribute("clients", Client.loadList(clientService.getClientList(username, passwordHash, page)));
+							model.addAttribute(
+								"clients",
+								Client.loadList(clientService.getClientList(username, passwordHash, page))
+							);
 
 							if (page > 1) {
 								model.addAttribute("prev", page - 1);
@@ -73,12 +76,12 @@ public class ManageClientsController {
 	}
 
 	@PostMapping
-	public Callable<Object> changeClient(
+	public Callable<Object> changeDelete(
 		HttpSession session,
 		HttpServletRequest request,
 		Model model,
 		@RequestParam("action") String action,
-		@RequestParam("client") String client,
+		@RequestParam("name") String client,
 		@RequestParam HashMap<String, String> variableParameters
 	) {
 		return GenericService.handleAsyncWebRequest(
@@ -101,7 +104,7 @@ public class ManageClientsController {
 					model.addAttribute("edit", edit);
 
 					if (clientService.clientExists(username, passwordHash, client)) {
-						model.addAttribute("client", client);
+						model.addAttribute("name", client);
 					} else {
 						throw new ServiceRequestException("No such client exists!");
 					}
@@ -118,7 +121,12 @@ public class ManageClientsController {
 
 					if (edit) {
 						if (variableParameters.containsKey("commitEdit")) {
-							clientService.changeClient(username, passwordHash, client, variableParameters.get("new_name"));
+							clientService.changeClient(
+								username,
+								passwordHash,
+								client,
+								variableParameters.get("new_name")
+							);
 
 							return ModelAndViews.MAIN_REDIRECT;
 						}

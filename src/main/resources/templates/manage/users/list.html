@@ -45,19 +45,19 @@
 					<td th:text="${user.name}" />
 					<td th:text="${user.isAdmin}" />
 					<td th:text="${user.addedBy}" />
-					<td th:text="${user.addedOn}" />
+					<td th:text="${#dates.format(user.addedOn, 'dd-MM-yyyy')}" />
 					<th:block th:if="${user.isAdmin}">
 						<td colspan="3" style="border: none;">
 							<form method="post">
 								<input type="hidden" name="action" value="edit" />
-								<input type="hidden" name="user" th:value="${user.name}" />
+								<input type="hidden" name="name" th:value="${user.name}" />
 								<button type="submit">Edit</button>
 							</form>
 						</td>
 						<td colspan="3" style="border: none;">
 							<form method="post">
 								<input type="hidden" name="action" value="delete" />
-								<input type="hidden" name="user" th:value="${user.name}" />
+								<input type="hidden" name="name" th:value="${user.name}" />
 								<button type="submit">Delete</button>
 							</form>
 						</td>
@@ -66,14 +66,14 @@
 						<td colspan="2" style="border: none;">
 							<form method="post">
 								<input type="hidden" name="action" value="edit" />
-								<input type="hidden" name="user" th:value="${user.name}" />
+								<input type="hidden" name="name" th:value="${user.name}" />
 								<button type="submit">Edit</button>
 							</form>
 						</td>
 						<td colspan="2" style="border: none;">
 							<form method="post">
 								<input type="hidden" name="action" value="delete" />
-								<input type="hidden" name="user" th:value="${user.name}" />
+								<input type="hidden" name="name" th:value="${user.name}" />
 								<button type="submit">Delete</button>
 							</form>
 						</td>

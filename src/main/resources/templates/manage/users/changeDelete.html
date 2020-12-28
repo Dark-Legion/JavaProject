@@ -31,7 +31,7 @@
 	<p th:unless="${edit}">Delete User</p>
 	<fieldset>
 		<form method="post">
-			<input type="hidden" name="user" th:value="${user}" />
+			<input type="hidden" name="name" th:value="${name}" />
 			<th:block th:if="${edit}">
 				<input type="hidden" name="action" th:value="edit" />
 			</th:block>
@@ -50,7 +50,7 @@
 					</thead>
 					<tbody>
 						<tr>
-							<td th:text="${user}" />
+							<td th:text="${name}" />
 							<td>
 								<input type="text" name="new_name" placeholder="(Unchanged)" />
 							</td>
@@ -75,7 +75,7 @@
 					</thead>
 					<tbody>
 						<tr>
-							<td th:text="${user}" />
+							<td th:text="${name}" />
 							<td>
 								<input type="text" name="reason" required="" />
 							</td>

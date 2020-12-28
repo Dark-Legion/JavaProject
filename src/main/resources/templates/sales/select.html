@@ -67,16 +67,21 @@
 	</th:block>
 	<th:block th:unless="${pages == null}">
 		<fieldset class="list">
-			<th:block th:each="z : ${#numbers.sequence(1, pages)}">
-				<form method="get">
-					<th:block th:unless="${specificSeller && seller == null}">
-						<input type="hidden" name="seller" th:value="${seller}" />
-					</th:block>
-					<input type="hidden" name="start" th:value="${start}" />
-					<input type="hidden" name="end" th:value="${end}" />
-					<input type="hidden" name="page" th:value="${z}" />
-					<button type="submit" th:text="${z}" />
-				</form>
+			<th:block th:if="${pages == 0}">
+				<p>No records available</p>
+			</th:block>
+			<th:block th:unless="${pages == 0}">
+				<th:block th:each="z : ${#numbers.sequence(1, pages)}">
+					<form method="get">
+						<th:block th:unless="${specificSeller && seller == null}">
+							<input type="hidden" name="seller" th:value="${seller}" />
+						</th:block>
+						<input type="hidden" name="start" th:value="${#dates.format(start, 'yyyy-MM-dd')}" />
+						<input type="hidden" name="end" th:value="${#dates.format(end, 'yyyy-MM-dd')}" />
+						<input type="hidden" name="page" th:value="${z}" />
+						<button type="submit" th:text="${z}" />
+					</form>
+				</th:block>
 			</th:block>
 		</fieldset>
 	</th:block>

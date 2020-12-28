@@ -47,7 +47,7 @@ public class ManageUsersSelfController {
 	}
 
 	@PostMapping
-	public Callable<Object> changePasswordGet(
+	public Callable<Object> changePasswordPost(
 		HttpSession session,
 		HttpServletRequest request,
 		Model model,
@@ -59,6 +59,12 @@ public class ManageUsersSelfController {
 				request,
 				model,
 				(String username, byte[] passwordHash) -> {
+					if (newPassword.isEmpty()) {
+						model.addAttribute("error", "User's new password must not be empty!");
+
+						return ModelAndViews.MANAGE_USERS_SELF;
+					}
+
 					byte[] newPasswordHash = Hasher.hash(newPassword);
 
 					userService.changeUserPassword(username, passwordHash, newPasswordHash);
@@ -68,6 +74,12 @@ public class ManageUsersSelfController {
 					return ModelAndViews.MAIN_REDIRECT;
 				},
 				(String username, byte[] passwordHash) -> {
+					if (newPassword.isEmpty()) {
+						model.addAttribute("error", "User's new password must not be empty!");
+
+						return ModelAndViews.MANAGE_USERS_SELF;
+					}
+
 					byte[] newPasswordHash = Hasher.hash(newPassword);
 
 					userService.changeUserPassword(username, passwordHash, newPasswordHash);

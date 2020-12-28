@@ -19,8 +19,14 @@
 			<button type="submit">Change password</button>
 		</form>
 		<th:block th:if="${admin}">
+			<form action="/add/user">
+				<button type="submit">Add user</button>
+			</form>
 			<form action="/manage/users">
 				<button type="submit">Manage users</button>
+			</form>
+			<form action="/add/product">
+				<button type="submit">Add product</button>
 			</form>
 			<form action="/manage/products">
 				<button type="submit">Manage products</button>
@@ -29,6 +35,9 @@
 		<th:block th:unless="${admin}">
 			<form action="/sell">
 				<button type="submit">Register sell</button>
+			</form>
+			<form action="/add/client">
+				<button type="submit">Add client</button>
 			</form>
 			<form action="/manage/clients">
 				<button type="submit">Manage clients</button>

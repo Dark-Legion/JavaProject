@@ -22,6 +22,10 @@ public final class Hasher {
 	public final static byte[] hash(String string) {
 		digest.reset();
 
+		if (string == null) {
+			return null;
+		}
+
 		return digest.digest(string.getBytes(StandardCharsets.UTF_8));
 	}
 }

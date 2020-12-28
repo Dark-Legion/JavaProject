@@ -14,7 +14,7 @@ public final class User implements Serializable {
 	public final String name;
 	public final boolean isAdmin;
 	public final String addedBy;
-	public final String addedOn;
+	public final Date addedOn;
 
 	private User(String name, boolean isAdmin, String addedBy, Date addedOn) {
 		super();
@@ -22,7 +22,7 @@ public final class User implements Serializable {
 		this.name = name;
 		this.isAdmin = isAdmin;
 		this.addedBy = addedBy;
-		this.addedOn = Utils.formatDateIso(addedOn);
+		this.addedOn = addedOn;
 	}
 
 	@Override

@@ -55,7 +55,7 @@ public class SellController {
 		HttpSession session,
 		HttpServletRequest request,
 		Model model,
-		@RequestParam("client") String client,
+		@RequestParam("name") String client,
 		@RequestParam MultiValueMap<String, String> variadicParameters
 	) {
 		return GenericService.handleAsyncWebRequest(
@@ -65,6 +65,8 @@ public class SellController {
 				model,
 				(String username, byte[] passwordHash) -> ErrorPage.error(model, "Insufficient privileges!"),
 				(String username, byte[] passwordHash) -> {
+					model.addAttribute("name", client);
+
 					SaleUnit[] saleUnits = null;
 
 					try {

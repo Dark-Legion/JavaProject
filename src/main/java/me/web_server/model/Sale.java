@@ -15,7 +15,7 @@ public final class Sale implements Serializable {
 
 	public final String seller;
 	public final String client;
-	public final String soldOn;
+	public final Date soldOn;
 	public final SaleUnit[] products;
 
 	private Sale(String seller, String client, Date soldOn, SaleUnit[] products) {
@@ -23,7 +23,7 @@ public final class Sale implements Serializable {
 
 		this.seller = seller;
 		this.client = client;
-		this.soldOn = Utils.formatDateIso(soldOn);
+		this.soldOn = soldOn;
 		this.products = products;
 	}
 

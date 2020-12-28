@@ -46,8 +46,8 @@
 				<th:block th:unless="${seller == null}">
 					<input type="hidden" name="seller" th:value="${seller}" />
 				</th:block>
-				<input type="hidden" name="start" th:value="${start}" />
-				<input type="hidden" name="end" th:value="${end}" />
+				<input type="hidden" name="start" th:value="${#dates.format(start, 'yyyy-MM-dd')}" />
+				<input type="hidden" name="end" th:value="${#dates.format(end, 'yyyy-MM-dd')}" />
 				<input type="hidden" name="page" th:value="${next}" />
 				<button type="submit">Next page</button>
 			</form>
@@ -74,7 +74,7 @@
 					<tr>
 						<td th:if="${stats.index == 0}" th:unless="${hideSeller}" th:rowspan="${#lists.size(sale.products)}" th:text="${sale.seller}" />
 						<td th:if="${stats.index == 0}" th:rowspan="${#lists.size(sale.products)}" th:text="${sale.client}" />
-						<td th:if="${stats.index == 0}" th:rowspan="${#lists.size(sale.products)}" th:text="${sale.soldOn}" />
+						<td th:if="${stats.index == 0}" th:rowspan="${#lists.size(sale.products)}" th:text="${#dates.format(sale.soldOn, 'dd-MM-yyyy')}" />
 						<td th:text="${product.product}" />
 						<td th:text="${product.pricePerUnit}" />
 						<td th:text="${product.quantity}" />

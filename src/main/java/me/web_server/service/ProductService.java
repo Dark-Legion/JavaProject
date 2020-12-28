@@ -33,4 +33,8 @@ public final class ProductService extends GenericService {
 	public int getProductListPageCount(String username, byte[] passwordHash) throws ServiceRequestException {
 		return dao.handleSqlQuery(() -> dao.getProductListPage(username, passwordHash));
 	}
+
+	public boolean productExists(String username, byte[] passwordHash, String product) throws ServiceRequestException {
+		return dao.handleSqlQuery(() -> dao.productExists(username, passwordHash, product));
+	}
 }

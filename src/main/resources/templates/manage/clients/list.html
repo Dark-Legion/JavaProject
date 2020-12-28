@@ -45,18 +45,18 @@
 					<td th:text="${client.name}" />
 					<td th:text="${client.isCompany}" />
 					<td th:text="${client.addedBy}" />
-					<td th:text="${client.addedOn}" />
+					<td th:text="${#dates.format(client.addedOn, 'dd-MM-yyyy')}" />
 					<td style="border: none;">
 						<form method="post">
 							<input type="hidden" name="action" value="edit" />
-							<input type="hidden" name="client" th:value="${client.name}" />
+							<input type="hidden" name="name" th:value="${client.name}" />
 							<button type="submit">Edit</button>
 						</form>
 					</td>
 					<td style="border: none;">
 						<form method="post">
 							<input type="hidden" name="action" value="delete" />
-							<input type="hidden" name="client" th:value="${client.name}" />
+							<input type="hidden" name="name" th:value="${client.name}" />
 							<button type="submit">Delete</button>
 						</form>
 					</td>

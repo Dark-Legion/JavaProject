@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title th:text="${pageTitle}" />
+	<style>
+		fieldset.list * {
+			display: inline-block;
+		}
+	</style>
+</head>
+<body>
+	<fieldset class="list">
+		<form action="/main">
+			<button type="submit">Return to main</button>
+		</form>
+	</fieldset>
+	<fieldset th:unless="${error == null}">
+		<p>Error:</p>
+		<fieldset>
+			<p th:text="${error}" />
+		</fieldset>
+	</fieldset>
+	<p th:text="${pageTitle}" />
+	<fieldset>
+		<form method="post">
+			<th:block th:each="field : ${fields}">
+				<label th:for="${field.key}" th:text="${field.value._1}" />
+				<th:block th:unless="${field.value._2 == 'checkbox'}">
+					<th:block th:unless="${values.containsKey(field.key)}">
+						<input th:type="${field.value._2}" th:name="${field.key}" required="" />
+					</th:block>
+					<th:block th:if="${values.containsKey(field.key)}">
+						<input th:type="${field.value._2}" th:name="${field.key}" th:value="${values.get(field.key)}" required="" />
+					</th:block>
+				</th:block>
+				<th:block th:if="${field.value._2 == 'checkbox'}">
+					<th:block th:unless="${values.containsKey(field.key)}">
+						<input th:type="${field.value._2}" th:name="${field.key}" />
+					</th:block>
+					<th:block th:if="${values.containsKey(field.key)}">
+						<input th:type="${field.value._2}" th:name="${field.key}" checked="" />
+					</th:block>
+				</th:block>
+				<br />
+			</th:block>
+			<button type="submit" th:text="${pageTitle}" />
+		</form>
+	</fieldset>
+</body>
+</html>

@@ -58,7 +58,17 @@ public abstract class GenericDao extends JdbcDaoSupport {
 			return callable.call();
 		} catch (SQLException exception) {
 			if (isInternalError(exception)) {
-				logger.error("Error occured while executing query! [" + exception.getMessage() + "]");
+				String stackTraceTop = null;
+
+				{
+					StackTraceElement[] stackTrace = exception.getStackTrace();
+
+					if (stackTrace.length != 0) {
+						stackTraceTop = stackTrace[0].getClassName() + ":" + stackTrace[0].getMethodName();
+					}
+				}
+
+				logger.error("Error occured while executing query! [" + exception.getMessage() + "]" + (stackTraceTop == null ? "" : " {Thrown by: " + stackTraceTop + "}"));
 
 				throw new ServiceRequestException("Internal error occured!");
 			} else {

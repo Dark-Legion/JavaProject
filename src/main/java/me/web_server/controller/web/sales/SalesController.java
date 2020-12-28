@@ -45,8 +45,8 @@ public class SalesController {
 		IServiceRequestCallable<Integer> pageCountCallable
 	) throws ServiceRequestException {
 		if (Utils.nonNullParameters(start, end)) {
-			model.addAttribute("start", Utils.formatDateIso(start));
-			model.addAttribute("end", Utils.formatDateIso(end));
+			model.addAttribute("start", start);
+			model.addAttribute("end", end);
 
 			int pageCount = pageCountCallable.call();
 

@@ -8,8 +8,7 @@
 		fieldset.list * {
 			display: inline-block;
 		}
-		table > thead > tr > th,
-		table > tbody > tr > td {
+		table > thead > tr > th {
 			border: 1px solid black;
 		}
 	</style>
@@ -51,11 +50,11 @@
 	<fieldset>
 		<form method="post">
 			<label for="client">Client:</label>
-			<th:block th:if="${client == null}">
-				<input type="text" name="client" required="" />
+			<th:block th:if="${name == null}">
+				<input type="text" name="name" required="" />
 			</th:block>
-			<th:block th:unless="${client == null}">
-				<input type="text" name="client" required="" th:value="${client}" />
+			<th:block th:unless="${name == null}">
+				<input type="text" name="name" required="" th:value="${name}" />
 			</th:block>
 			<button type="submit">Submit</button>
 			<table>
@@ -64,12 +63,28 @@
 						<th>Product</th>
 						<th>Price per unit</th>
 						<th>Quantity</th>
-						<th>
+						<th style="border: none;">
 							<button onclick="addRow();">Add new row</button>
 						</th>
 					</tr>
 				</thead>
 				<tbody id="products">
+					<th:block th:if="${products == null}">
+						<tr>
+							<td>
+								<input type="text" name="product" required="" />
+							</td>
+							<td>
+								<input type="text" name="price_per_unit" required="" />
+							</td>
+							<td>
+								<input type="text" name="quantity" required="" />
+							</td>
+							<td>
+								<button onclick="this.parent.parent.remove();">Delete row</button>
+							</td>
+						</tr>
+					</th:block>
 					<th:block th:unless="${products == null}">
 						<th:block th:each="product : ${products}">
 							<tr>
@@ -110,7 +125,7 @@
 										</th:block>
 									</td>
 								</th:block>
-								<td style="border: none;">
+								<td>
 									<button onclick="this.parent.parent.remove();">Delete row</button>
 								</td>
 							</tr>

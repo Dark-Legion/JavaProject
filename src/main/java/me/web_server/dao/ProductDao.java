@@ -16,12 +16,14 @@ public class ProductDao extends PostgreSqlDao {
 	private final static String DELETE_PRODUCT = NAME_PREFIX + "\"delete_product\"(?, ?, ?, ?)";
 	private final static String GET_PRODUCT_LIST = NAME_PREFIX + "\"get_product_list\"(?, ?, ?)";
 	private final static String GET_PRODUCT_LIST_PAGE_COUNT = NAME_PREFIX + "\"get_product_list_page_count\"(?, ?)";
+	private final static String PRODUCT_EXISTS = NAME_PREFIX + "\"product_exists\"(?, ?, ?)";
 
 	private final ThreadLocal<PreparedStatement> addProduct = new ThreadLocal<>();
 	private final ThreadLocal<PreparedStatement> changeProduct = new ThreadLocal<>();
 	private final ThreadLocal<PreparedStatement> deleteProduct = new ThreadLocal<>();
 	private final ThreadLocal<PreparedStatement> getProductList = new ThreadLocal<>();
 	private final ThreadLocal<CallableStatement> getProductListPageCount = new ThreadLocal<>();
+	private final ThreadLocal<CallableStatement> productExists = new ThreadLocal<>();
 
 	private PreparedStatement getAddProduct() throws SQLException {
 		PreparedStatement statement = addProduct.get();
@@ -136,5 +138,28 @@ public class ProductDao extends PostgreSqlDao {
 		statement.execute();
 
 		return statement.getInt(1);
+	}
+
+	private CallableStatement getProductExists() throws SQLException {
+		CallableStatement statement = productExists.get();
+
+		if (statement == null) {
+			statement = getDbConnection().prepareCall("{ ? = call " + PRODUCT_EXISTS + " }");
+			statement.registerOutParameter(1, Types.BOOLEAN);
+			productExists.set(statement);
+		}
+
+		return statement;
+	}
+
+	public boolean productExists(String username, byte[] passwordHash, String product) throws SQLException {
+		CallableStatement statement = getProductExists();
+
+		setAuthParameters(statement, username, passwordHash, 2);
+		statement.setString(3, product);
+
+		statement.execute();
+
+		return statement.getBoolean(1);
 	}
 }
