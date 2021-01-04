@@ -63,8 +63,11 @@ public abstract class GenericDao extends JdbcDaoSupport {
 				{
 					StackTraceElement[] stackTrace = exception.getStackTrace();
 
-					if (stackTrace.length != 0) {
-						stackTraceTop = stackTrace[0].getClassName() + ":" + stackTrace[0].getMethodName();
+					for (StackTraceElement stackTraceElement : stackTrace) {
+						if (stackTraceElement.getClassName().endsWith("Dao")) {
+							stackTraceTop = stackTraceElement.getClassName() + ":" + stackTraceElement.getMethodName();
+							break;
+						}
 					}
 				}
 
